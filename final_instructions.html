@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Welcome</h2>
+
+<img id="userImage" width="150">
+
+<h3 id="username"></h3>
+
+<script>
+const username = sessionStorage.getItem("username");
+const image = sessionStorage.getItem("image");
+
+document.getElementById("username").innerText = username;
+document.getElementById("userImage").src = image;
+</script>
+
+</body>
+</html>

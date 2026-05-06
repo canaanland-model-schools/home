@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="fav_icon2.ico">
+    <title>cbt.canaanlandmodelschools.org | Firebase Powered</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        /* Keep all your existing styles intact */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+       
+        :root {
+            --primary-color: #008000;
+            --secondary-color: #d90000;
+            --background-color: rgb(50,125,50);
+            --text-color: #333;
+            --card-bg: white;
+            --header-bg: rgb(50,125,50);
+            --header-text: white;
+            --nav-bg: #006400;
+            --input-border: #ddd;
+        }
+       
+        .dark-theme {
+            --primary-color: #4CAF50;
+            --secondary-color: #ff5252;
+            --background-color: #2c2c2c;
+            --text-color: #f0f0f0;
+            --card-bg: #3c3c3c;
+            --header-bg: rgb(50,125,50);
+            --header-text: #f0f0f0;
+            --nav-bg: #1b5e20;
+            --input-border: #555;
+        }
+       
+        body {
+            position: relative;
+            z-index: 1;
+        }
+       
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('img/wisdom_logo1.png') no-repeat center center;
+            background-size: 300px 300px;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+            background-color: white;
+            align-items: center;
+            text-align: center;
+        }
+       
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+       
+        nav {
+            background-color: var(--nav-bg);
+            padding: 15px 0;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+       
+        #student-image {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+       
+        header {
+            background-color: blue;
+            color: var(--header-text);
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+       
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+       
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+            border: 2px solid var(--secondary-color);
+        }
+       
+        .welcome-message {
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-left: 5px solid var(--secondary-color);
+            margin: 20px 0;
+            font-size: 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+       
+        .welcome-message img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+            border: 3px solid var(--primary-color);
+        }
+       
+        .exam-sections {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+       
+        .exam-section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            overflow: hidden;
+            min-width: 300px;
+        }
+       
+        .section-header {
+            background-color: blue;
+            color: var(--header-text);
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+       
+        .section-body {
+            padding: 25px;
+        }
+       
+        select, input[type="password"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 15px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+       
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+       
+        .btn:hover {
+            background-color: var(--nav-bg);
+        }
+       
+        .btn-secondary {
+            background-color: #007bff;
+        }
+       
+        .btn-secondary:hover {
+            background-color: #0056b3;
+        }
+       
+        .btn-danger {
+            background-color: #dc3545;
+        }
+       
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+       
+        .windows-activate {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-color);
+            font-size: 14px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+       
+        @media (max-width: 900px) {
+            .exam-sections {
+                flex-direction: column;
+            }
+        }
+       
+        .logout-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: crimson;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+       
+        .admin-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+       
+        .attempt-status {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+       
+        .completed {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+       
+        .available {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.1);
+            border-radius: 50%;
+            border-top-color: #008000;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+    <div class="container">
+        <header>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="img/wisdom_logo1.png" alt="School Logo">
+                </div>
+            </div>
+            <p>2025/2026 3RD TERM COMPUTER BASED TEST EXAMINATION (Firebase Cloud)</p>
+        </header>
+       
+        <div class="welcome-message">
+            <img id="userImage" src="img/default_user.jpg" alt="Student Photo"><br>
+            <h2>WELCOME: <span id="user">Student</span></h2>
+            <div id="attemptStatus" class="attempt-status">Loading exam status...</div>
+        </div>
+
+        <!-- 3 selection boxes side by side -->
+        <div class="exam-sections">
+            <div class="exam-section">
+                <div class="section-header">SELECT CLASS □</div>
+                <div class="section-body">
+                    <label>Select Class:</label>
+                    <select id="classSelect" onchange="updateAttemptStatus()">
+                        <option value="">-- Select Class --</option>
+                        <option value="jss1">JSS1 (Junior Secondary School 1)</option>
+                        <option value="jss2">JSS2 (Junior Secondary School 2)</option>
+                        <option value="jss3">JSS3 (Junior Secondary School 3)</option>
+                    </select>
+                </div>
+            </div>
+           
+            <div class="exam-section">
+                <div class="section-header">SELECT SUBJECT □</div>
+                <div class="section-body">
+                    <label>Select Subject:</label>
+                    <select id="subjectSelect" onchange="updateAttemptStatus()">
+                        <option value="">-- Select Subject --</option>
+                        <option value="demo">Demo</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="english_language">English Language</option>
+                        <option value="english_literature">Literature in English</option>
+                        <option value="intermediate_science">Intermediate Science</option>
+                        <option value="digital_technology">Computer Studies</option>
+                        <option value="food_and_nutrition">Food And Nutrition</option>
+                        <option value="livestock_farming">Livestock Farming</option>
+                        <option value="social_Studies">Social | Citizenship Studies</option>
+                        <option value="business_studies">Business Studies</option>
+                        <option value="cultural_and_creative_art">Cultural & Creative Art</option>
+                        <option value="yoruba">Yoruba</option>
+                        <option value="phe">Physical Health Education</option>
+                        <option value="crs">Christian Religious Studies</option>
+                        <option value="french">French</option>
+                        <option value="music">Music</option>
+                        <option value="phonetics">Phonetics | Diction</option>
+                        <option value="nigerian_history">History</option>
+                        <option value="agricultural_science">Agricultural Science</option>
+                        <option value="fine_art">Fine Art</option>
+                        <option value="ekiti_values">Ekiti Values</option>
+                    </select>
+                </div>
+            </div>
+           
+            <div class="exam-section">
+                <div class="section-header">SELECT EXAM TYPE □</div>
+                <div class="section-body">
+                    <label>Select Exam Type:</label>
+                    <select id="typeSelect">
+                        <option value="objectives">Objectives/Theory</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASSWORD SECTION -->
+        <div class="exam-section" style="max-width: 500px; margin: 0 auto;">
+            <div class="section-header">ENTER PASSWORD □</div>
+            <div class="section-body">
+                <label style="color: var(--secondary-color);">Enter Password:</label>
+                <input type="password" id="examPassword" placeholder="Enter subject password">
+            </div>
+        </div>
+       
+        <center>
+            <button class="btn" id="startExamBtn" onclick="startExam()">
+                <i class="fa-solid fa-play"></i> Start Exam
+            </button>
+        </center>
+       
+        <div class="windows-activate">
+            <p>&copy; 2026 cbt.canaanlandmodelschools.org | Secure Firebase Backend</p>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------- FIREBASE CONFIGURATION (Replace with your own) -------------------------
+        // IMPORTANT: You must replace these credentials with your actual Firebase project config.
+        const firebaseConfig = {
+            apiKey: "AIzaSyB_wRrNkH3wQ2zXpR9vL3sT5mJ8fG7dY2c",     // <-- REPLACE with your API Key
+            authDomain: "your-project-id.firebaseapp.com",        // <-- REPLACE
+            projectId: "your-project-id",                         // <-- REPLACE
+            storageBucket: "your-project-id.appspot.com",         // <-- REPLACE
+            messagingSenderId: "123456789012",                    // <-- REPLACE
+            appId: "1:123456789012:web:abcdef1234567890"          // <-- REPLACE
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // ----------------------------- GLOBAL VARIABLES -----------------------------
+        const username = sessionStorage.getItem('username');
+        const imageName = sessionStorage.getItem('image');
+        const studentId = sessionStorage.getItem('studentId') || username; // unique identifier for student
+        
+        // Redirect if not logged in
+        if (!username) {
+            alert("Please log in first.");
+            window.location.href = "index.html";
+        }
+        
+        document.getElementById('user').innerText = username || 'Student';
+        document.getElementById('userImage').src = imageName || 'img/default_user.jpg';
+        
+        // Helper: Format subject name for display
+        function formatSubjectName(subject) {
+            const subjectMap = {
+                'demo': 'Demo',
+                'mathematics': 'Mathematics',
+                'english_language': 'English Language',
+                'english_literature': 'Literature in English',
+                'intermediate_science': 'Intermediate Science',
+                'digital_technology': 'Digital & Computer Technology',
+                'home_economics': 'Home Economics',
+                'agricultural_science': 'Agricultural Science',
+                'livestock_farming': 'Livestock Farming',
+                'social_studies': 'Social Studies',
+                'business_studies': 'Business Studies',
+                'cultural_and_creative_art': 'Cultural & Creative Art',
+                'yoruba': 'Yoruba',
+                'phe': 'Physical Health Education',
+                'crs': 'Christian Religious Studies',
+                'french': 'French',
+                'music': 'Music',
+                'phonetics': 'Phonetics',
+                'fine_art': "Fine Art",
+                'nigerian_history': 'Nigeria History',
+                'ekiti_values': 'Ekiti Values',
+                'citizenship_studies': 'Citizenship Studies',
+                'food_and_nutrition': 'Food And Nutrition',
+                'fashion_design_and_garment_making': 'Fashion Design| Garment Making'
+            };
+            return subjectMap[subject] || subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ');
+        }
+        
+        // ----------------------------- FIREBASE: CHECK EXAM PASSWORD (dynamic per class+subject) -----------------
+        async function fetchExamPassword(cls, subj) {
+            try {
+                // Document path: exams_passwords/{class}_{subject}
+                const docId = `${cls}_${subj}`.toLowerCase();
+                const docRef = db.collection("exam_passwords").doc(docId);
+                const docSnap = await docRef.get();
+                if (docSnap.exists) {
+                    return docSnap.data().password;
+                } else {
+                    console.warn("No password document found for:", docId);
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error fetching exam password:", error);
+                return null;
+            }
+        }
+        
+        // ----------------------------- FIREBASE: CHECK IF STUDENT ALREADY ATTEMPTED --------------------------
+        // Storing attempts in subcollection: students/{studentId}/exam_attempts/{class_subject}
+        async function hasCompletedExamFirebase(cls, subj, studentIdentifier) {
+            try {
+                const attemptDocId = `${cls}_${subj}`.toLowerCase();
+                const attemptRef = db.collection("students").doc(studentIdentifier)
+                                     .collection("exam_attempts").doc(attemptDocId);
+                const attemptSnap = await attemptRef.get();
+                return attemptSnap.exists && attemptSnap.data().completed === true;
+            } catch (error) {
+                console.error("Error checking exam attempt:", error);
+                return false; // assume not completed on error
+            }
+        }
+        
+        // Mark exam as completed in Firebase
+        async function markExamCompletedFirebase(cls, subj, studentIdentifier) {
+            try {
+                const attemptDocId = `${cls}_${subj}`.toLowerCase();
+                const attemptRef = db.collection("students").doc(studentIdentifier)
+                                     .collection("exam_attempts").doc(attemptDocId);
+                await attemptRef.set({
+                    completed: true,
+                    completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    class: cls,
+                    subject: subj
+                });
+                console.log("Exam marked completed in Firebase");
+                return true;
+            } catch (error) {
+                console.error("Error marking exam completed:", error);
+                return false;
+            }
+        }
+        
+        // Update UI status (async)
+        async function updateAttemptStatus() {
+            const cls = document.getElementById("classSelect").value.toLowerCase();
+            const sub = document.getElementById("subjectSelect").value.toLowerCase();
+            const statusElement = document.getElementById("attemptStatus");
+            
+            if (!cls || !sub) {
+                statusElement.innerHTML = "📌 Please select both class and subject";
+                statusElement.className = "attempt-status";
+                return;
+            }
+            
+            statusElement.innerHTML = "⏳ Checking exam attempt from database... <span class='loading-indicator'></span>";
+            statusElement.className = "attempt-status";
+            
+            try {
+                const completed = await hasCompletedExamFirebase(cls, sub, studentId);
+                if (completed) {
+                    statusElement.innerHTML = "❌ You have already completed this exam. No further attempts allowed.";
+                    statusElement.className = "attempt-status completed";
+                } else {
+                    statusElement.innerHTML = "✅ This exam is available for you to take (no previous attempt found).";
+                    statusElement.className = "attempt-status available";
+                }
+            } catch (err) {
+                statusElement.innerHTML = "⚠️ Unable to verify attempt status. Check your connection.";
+                statusElement.className = "attempt-status";
+            }
+        }
+        
+        // ----------------------------- START EXAM: PASSWORD + ATTEMPT VERIFICATION -------------------------
+        async function startExam() {
+            const cls = document.getElementById("classSelect").value.toLowerCase();
+            const sub = document.getElementById("subjectSelect").value.toLowerCase();
+            const type = document.getElementById("typeSelect").value.toLowerCase();
+            const enteredPass = document.getElementById("examPassword").value.trim();
+            const startBtn = document.getElementById("startExamBtn");
+            
+            if (!cls || !sub || !enteredPass) {
+                alert("Please complete all selections and enter exam password.");
+                return;
+            }
+            
+            // Disable button to avoid double submission
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-pulse"></i> Verifying...';
+            
+            try {
+                // 1. Fetch correct password from Firebase
+                const correctPassword = await fetchExamPassword(cls, sub);
+                if (!correctPassword) {
+                    alert("❌ No password configured for this class/subject in database. Contact admin.");
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Exam';
+                    return;
+                }
+                
+                if (enteredPass !== correctPassword) {
+                    alert("❌ Incorrect password for this class and subject combination!");
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Exam';
+                    return;
+                }
+                
+                // 2. Check attempt in Firebase
+                const alreadyAttempted = await hasCompletedExamFirebase(cls, sub, studentId);
+                if (alreadyAttempted) {
+                    alert("⚠️ You have already completed this exam. No further attempts allowed.");
+                    window.location.href = "exam_attempted.html";
+                    return;
+                }
+                
+                // 3. All validations passed: Save session data and redirect
+                sessionStorage.setItem("class", cls);
+                sessionStorage.setItem("subject", sub);
+                sessionStorage.setItem("type", type);
+                sessionStorage.setItem("examInfo", `${formatSubjectName(sub)} - ${cls.toUpperCase()} (3RD TERM)`);
+                localStorage.setItem("examClass", cls);
+                localStorage.setItem("examSubject", formatSubjectName(sub));
+                localStorage.setItem("pendingAttempt", "true");
+                
+                // IMPORTANT: We will mark as completed only after student finishes exam (on exam page)
+                // But to prevent double start, we set a temporary lock in localStorage (optional)
+                // The final marking will happen inside the exam completion logic (exam HTML page should call markExamCompletedFirebase)
+                // However, to avoid re-entering before completion, we store start flag
+                sessionStorage.setItem("examStarted", "true");
+                
+                const redirectUrl = `${cls}_${sub}_exam.html`;
+                
+                // Check if exam file exists (optional fetch HEAD)
+                fetch(redirectUrl, { method: "HEAD" })
+                    .then(response => {
+                        if (response.ok) {
+                            alert(`✅ Access granted! Redirecting to ${formatSubjectName(sub)} exam...`);
+                            window.location.href = redirectUrl;
+                        } else {
+                            alert("⚠️ Exam page not available yet. Redirecting to landing page.");
+                            window.location.href = "landing.html";
+                        }
+                    })
+                    .catch(() => {
+                        alert("⚠️ Cannot load exam page. Contact support.");
+                        window.location.href = "landing.html";
+                    })
+                    .finally(() => {
+                        startBtn.disabled = false;
+                    });
+                    
+            } catch (error) {
+                console.error("Start exam error:", error);
+                alert("Network or database error. Please try again.");
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start Exam';
+            }
+        }
+        
+        // Optional: Expose mark exam function globally so that the exam HTML page can call it when finishing.
+        window.markExamCompletedInFirebase = async function(cls, subj) {
+            return await markExamCompletedFirebase(cls, subj, studentId);
+        };
+        
+        // Also provide a quick function for external exam pages to get student info & mark completion.
+        window.getFirebaseStudentId = () => studentId;
+        window.getFirebaseDb = () => db;
+        
+        // Update attempt status when class/subject changes (debounced)
+        let statusTimeout;
+        function updateAttemptStatusDebounced() {
+            if (statusTimeout) clearTimeout(statusTimeout);
+            statusTimeout = setTimeout(() => {
+                updateAttemptStatus();
+            }, 300);
+        }
+        
+        // Attach event listeners to dropdowns
+        document.getElementById("classSelect").addEventListener("change", updateAttemptStatusDebounced);
+        document.getElementById("subjectSelect").addEventListener("change", updateAttemptStatusDebounced);
+        
+        // On page load, if both are selected, check status
+        window.addEventListener("DOMContentLoaded", () => {
+            const cls = document.getElementById("classSelect").value;
+            const sub = document.getElementById("subjectSelect").value;
+            if (cls && sub) updateAttemptStatus();
+        });
+        
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        function goToAdmin() {
+            window.location.href = 'admin.html';
+        }
+        
+        // Provide demo instruction in console for admin to set up Firestore structure:
+        console.log(`
+        ========== FIREBASE SETUP INSTRUCTIONS ==========
+        To use this CBT system with Firebase:
+        1. Create a Firebase project and enable Firestore Database.
+        2. Replace firebaseConfig object above with your project's credentials.
+        3. Create collections:
+           - "exam_passwords" : documents named like "jss1_mathematics", "jss2_english_language", etc.
+             Each document should have field "password" (string).
+           - "students" : document ID = student unique identifier (username/regNo).
+             Subcollection "exam_attempts" : documents named "jss1_mathematics" with field "completed": true
+        4. Security Rules (recommended):
+           - Allow read/write only for authenticated users if you add Firebase Auth.
+           For simplicity (testing), use test rules:
+           rules_version = '2';
+           service cloud.firestore {
+             match /databases/{database}/documents {
+               match /{document=**} {
+                 allow read, write: if request.time < timestamp.date(2027, 1, 1);
+               }
+             }
+           }
+        5. Sample data:
+           db.collection("exam_passwords").doc("jss1_mathematics").set({ password: "x8q3r5" })
+           db.collection("students").doc("STUDENT001").collection("exam_attempts").doc("jss1_mathematics").set({ completed: true })
+        =================================================
+        `);
+    </script>
+</body>
+</html>

@@ -3,620 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canaanland Model Schools</title>
+    <title>cbt.canaanlandmodelschool.org</title>
+     <link rel="icon" type="image/x-icon" href="fav_icon2.ico">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            position: relative;
-            background: url('img/school-background.jpg') no-repeat center center fixed;
-            background-size: cover;
+        }
+       
+            body {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          font-family: 'Jost', sans-serif;
+          background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+          background-image: url("img/lab3.png");
+          background-repeat: no-repeat;
+          background-size: cover;
         }
 
-        /* Overlay to make content readable over background image */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
+         .main {
+          width: 405px;
+          height: 450px;
+          background: #eee;
+          overflow: hidden;
+          border-radius: 25px;
+          box-shadow: 5px 20px 50px #000;
+          text-align: center;
+        }
+        .login-container {
+            background-color: rgba(200,200,200,0.4);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.85); /* White overlay with opacity */
-            z-index: -1;
-        }
-
-        /* Header and Navigation Styles */
-        header {
-            background: linear-gradient(blue, aqua 0%, fuchsia 100%);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .school-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid gold;
-            object-fit: cover;
-        }
-
-        .school-name h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-            color: gold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .school-name p {
-            font-size: 14px;
-            opacity: 0.9;
-            font-style: italic;
-        }
-
-        /* Navigation Menu */
-        nav {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 50px;
-            padding: 5px 20px;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-menu li {
-            position: relative;
-        }
-
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 10px 5px;
-            display: block;
-            transition: all 0.3s ease;
-            font-size: 16px;
-        }
-
-        .nav-menu a:hover {
-            color: gold;
-            transform: translateY(-2px);
-        }
-
-        /* Dropdown Menu Styles */
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: white;
-            min-width: 220px;
-            border-radius: 8px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            margin-top: 10px;
-        }
-
-        .dropdown:hover .dropdown-content {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .dropdown-content a {
-            color: #333;
-            padding: 12px 20px;
-            border-bottom: 1px solid #eee;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-content a:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-content a:hover {
-            background: #1e3c72;
-            color: white;
-            padding-left: 30px;
-            transform: none;
-        }
-
-        /* Main Content */
-        main {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-            min-height: 60vh;
-        }
-
-        .welcome-section {
+            max-width: 400px;
+            padding: 40px;
             text-align: center;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 50px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+       
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+       
+        .subtitle {
+            color: #666;
             margin-bottom: 30px;
         }
-
-        .welcome-section h2 {
-            font-size: 42px;
-            color: #1e3c72;
+       
+        .input-group {
             margin-bottom: 20px;
-            animation: fadeInDown 1s ease;
+            text-align: left;
         }
-
-        .welcome-section p {
-            font-size: 18px;
+       
+        label {
+            display: block;
+            margin-bottom: 5px;
             color: #555;
-            line-height: 1.8;
-            margin-bottom: 20px;
-        }
-
-        .highlight-box {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            color: #1e3c72;
-            padding: 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            display: inline-block;
-        }
-
-        /* Marquee Styles */
-        .marquee-container {
-            background: linear-gradient(blue, aqua 0%, fuchsia 100%);
-            color: gold;
-            padding: 15px 0;
-            border-top: 3px solid gold;
-            border-bottom: 3px solid gold;
-            overflow: hidden;
-            margin: 30px 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .marquee-text {
-            font-size: 28px;
-            font-weight: bold;
-            white-space: nowrap;
-            display: inline-block;
-            animation: marquee 20s linear infinite;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .marquee-text i {
-            margin: 0 30px;
-            color: white;
-        }
-
-        /* Features Section */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            border-bottom: 4px solid #1e3c72;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .feature-card i {
-            font-size: 48px;
-            color: #1e3c72;
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            font-size: 24px;
-            color: #1e3c72;
-            margin-bottom: 15px;
-        }
-
-        .feature-card p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .feature-card .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 25px;
-            background: linear-gradient(aqua, red 0%, fuchsia 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card .btn:hover {
-            background: linear-gradient(blue, aqua 0%, fuchsia 100%);
-            transform: scale(1.05);
-        }
-
-        /* Quick Links */
-        .quick-links {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 12px;
-            margin: 40px 0;
-            text-align: center;
-        }
-
-        .quick-links h3 {
-            font-size: 28px;
-            color: #1e3c72;
-            margin-bottom: 20px;
-        }
-
-        .link-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .link-btn {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
             font-weight: 500;
-            transition: all 0.3s ease;
-            border: 2px solid gold;
         }
-
-        .link-btn:hover {
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+       
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
         }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(blue, aqua 0%, fuchsia 100%);
+       
+        input:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+       
+        .login-btn {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
             color: white;
-            padding: 40px 0 20px;
-            margin-top: 60px;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
         }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+       
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
-        .footer-section h4 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: gold;
-            border-bottom: 2px solid gold;
-            padding-bottom: 10px;
-            display: inline-block;
-        }
-
-        .footer-section p {
-            line-height: 1.8;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 10px;
-        }
-
-        .footer-section ul li a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section ul li a:hover {
-            color: gold;
-            padding-left: 5px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 24px;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: gold;
-            transform: translateY(-3px);
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            margin-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.2);
+       
+        .error-message {
+            color: #e74c3c;
+            margin-top: 15px;
             font-size: 14px;
-            opacity: 0.9;
+            display: none;
         }
-
-        .copyright span {
-            color: gold;
-            font-weight: bold;
+       
+        .demo-accounts {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: left;
         }
-
-        /* Animations */
-        @keyframes marquee {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(-100%);
-            }
+       
+        .demo-accounts h3 {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-
-            .logo-container {
-                flex-direction: column;
-            }
-
-            .nav-menu {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .dropdown-content {
-                position: static;
-                opacity: 1;
-                visibility: visible;
-                transform: none;
-                box-shadow: none;
-                background: rgba(255,255,255,0.1);
-                margin-top: 10px;
-                display: none;
-            }
-
-            .dropdown:hover .dropdown-content {
-                display: block;
-            }
-
-            .dropdown-content a {
-                color: white;
-                text-align: center;
-            }
-
-            .marquee-text {
-                font-size: 20px;
-            }
-
-            .welcome-section h2 {
-                font-size: 32px;
-            }
+       
+        .demo-accounts p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 5px;
         }
     </style>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <header>
-        <div class="header-container">
-            <div class="logo-container">
-                <img src="img/Ctemplogo.png" alt="Canaanland Model Schools Logo" class="school-logo" onerror="this.src='https://via.placeholder.com/80x80?text=Logo'">
-                <div class="school-name">
-                    <h1>CANAANLAND MODEL SCHOOLS</h1>
-                    <p>CANAANLAND MODEL SCHOOLS: GOD IS OUR STRENGTH</p>
-                </div>
-            </div>
-            
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li class="dropdown">
-                        <a href="#eportal">ePortal <i class="fas fa-chevron-down" style="font-size: 12px; margin-left: 5px;"></i></a>
-                        <div class="dropdown-content">
-                            <a href="https://canaanland-model-schools.github.io/exams-portal/index.html">CBT Portal</a>
-                            <a href="https://canaanland-model-schools.github.io/classroom/index.html">Classroom Portal</a>
-                            <a href="https://canaanland-model-schools.github.io/e-scores-sheet/index.html">Academic Records</a>
-                            <a href="https://canaanland-model-schools.github.io/e-report-sheet/index.html">Report Sheet</a>
-                            <a href="https://canaanland-model-schools.github.io/Assignments/index.html">Assignment</a>
-                        </div>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Marquee Text -->
-    <div class="marquee-container">
-        <div class="marquee-text">
-            <i class="fas fa-graduation-cap"></i> ADMISSION IN PROGRESS FOR 2025/2026 ACADEMIC SESSION 
-            <i class="fas fa-star"></i> APPLY NOW!!! 
-            <i class="fas fa-graduation-cap"></i> LIMITED SLOTS AVAILABLE 
-            <i class="fas fa-phone"></i> CALL: 081-444-544-83
-        </div>
+<body oncontextmenu="return false;">
+  <div class="container-xxxl center">
+    <div>
+      <img src="img/Ctemplogo.png" style="margin-bottom:15px; width: 400px; height: 120px" />
     </div>
 
-    <main>
-        <div class="welcome-section">
-            <h2>Welcome to Canaanland Model Schools</h2>
-            <p>Providing quality education with a difference. We nurture future leaders through Canaaland model schools  in academics, character development, and extra-curricular activities.</p>
-            <div class="highlight-box">
-                <i class="fas fa-check-circle"></i> Fully Accredited <i class="fas fa-circle" style="font-size: 8px; margin: 0 10px;"></i>
-                <i class="fas fa-check-circle"></i> Modern Facilities <i class="fas fa-circle" style="font-size: 8px; margin: 0 10px;"></i>
-                <i class="fas fa-check-circle"></i> Experienced Teachers
+    <div class="login-container">
+        <h3><label style="color: red; font-size: 25px;">CBT PORTAL</label></h3>
+        <p class="subtitle"  style="color: lime; font-size: 15px;">Please sign in to your account</p>
+       
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="username"  style="color: red; font-size: 18px; text-align: center;">Enter Your Username  Here</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
             </div>
-        </div>
-
-        <!-- Features Section -->
-        <div class="features">
-            <div class="feature-card">
-                <i class="fas fa-laptop"></i>
-                <h3>CBT Portal</h3>
-                <p>Take your examinations online with our state-of-the-art Computer Based Test platform.</p>
-                <a href="https://canaanland-model-schools.github.io/exams-portal/index.html" class="btn">Access CBT Portal</a>
+           
+            <div class="input-group">
+                <label for="password"  style="color: orange; font-size: 18px; text-align: center;">Enter Your Password Here</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
             </div>
-
-            <div class="feature-card">
-                <i class="fas fa-chalkboard-teacher"></i>
-                <h3>Classroom Portal</h3>
-                <p>Access learning materials, assignments, and interact with teachers online.</p>
-                <a href="https://canaanland-model-schools.github.io/classroom/index.html" class="btn">Access Classroom</a>
+            <div style="margin-top: 10px;">
+                      <label style="color: lime; font-size: 15px;">
+                        <input type="checkbox" id="altLoginCheck">
+                       Click the checkbox to verify and click on Sign In
+                      </label>
             </div>
+           
+            <button type="submit" class="login-btn">Sign In</button>
 
-            <div class="feature-card">
-                <i class="fas fa-calendar-alt"></i>
-                <h3>Academic Calendar</h3>
-                <p>Stay updated with school events, holidays, and important dates.</p>
-                <a href="https://canaanland-model-schools.github.io/home/index.html" class="btn">View Calendar</a>
+           
+            <div class="error-message" id="errorMessage">
+                Invalid username or password. Please try again.
             </div>
-        </div>
+            <label style="color: lime; font-size: 25px;">CBT PORTAL</label>
+             <a href="https://canaanland-model-schools.github.io/home/" style="color: red; font-size: 18px;">Home</a>
+        </form>
+    </div>
 
-        <!-- Quick Links -->
-        <div class="quick-links">
-            <h3>Quick Links</h3>
-            <div class="link-buttons">
-                <a href="#about" class="link-btn"><i class="fas fa-school"></i> About Us</a>
-                <a href="#admission" class="link-btn"><i class="fas fa-edit"></i> Apply for Admission</a>
-                <a href="#contact" class="link-btn"><i class="fas fa-envelope"></i> Contact Us</a>
-                <a href="https://canaanland-model-schools.github.io/e-report-sheet/index.html" class="link-btn"><i class="fas fa-chart-line"></i> Check Results</a>
-
-          
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h4>Contact Us</h4>
-                <p><i class="fas fa-map-marker-alt"></i> Canaanland Model Schools, Ekute Quarters, Ado Ekiti, Nigeria</p>
-                <p><i class="fas fa-phone"></i> +234 081-444-544-83</p>
-                <p><i class="fas fa-envelope"></i> info@canaanlandmodelschools.edu.ng</p>
-            </div>
-
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                    <li><a href="https://canaanland-model-schools.github.io/exams-portal/index.html">CBT Portal</a></li>
-                    <li><a href="https://canaanland-model-schools.github.io/classroom/index.html">Classroom Portal</a></li>
-
-
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4>Follow Us</h4>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-linkedin"></i></a>
-                </div>
-                <p style="margin-top: 20px;">Subscribe to our newsletter</p>
-                <form style="display: flex; gap: 10px; margin-top: 10px;">
-                    <input type="email" placeholder="Your email" style="padding: 8px; border-radius: 5px; border: none; flex: 1;">
-                    <button type="submit" style="padding: 8px 15px; background: gold; border: none; border-radius: 5px; cursor: pointer;"><i class="fas fa-paper-plane"></i></button>
-                </form>
-            </div>
-        </div>
-
-        <div class="copyright">
-            &copy; 2026 Canaanland Model Schools. All rights reserved. | <span>canaanlandmodelschools.org</span>
-        </div>
-    </footer>
-
-    <!-- Smooth scroll for anchor links -->
     <script>
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        const users = [
+            // JSS1 BOYS (All Paid)
+                //{ username: "Shehu Ahmeed Marvelous", password: "wfs101", image: "wfs101.png", name: "Shehu Ahmeed Marvelous", class: "JSS 1" }//
+            {username: "felix victor", password: "cmgs101", image: "cmgs101.jpg", paid: true},
+            {username: "alpha trinity", password: "cmgs102", image: "cmgs102.jpg", paid: true},
+            {username: "ogundipe seun", password: "cmgs103", image: "cmgs103.jpg", paid: true},
+            {username: "abiodun darasimi", password: "cmgs104", image: "cmgs104.jpg", paid: true},
+            {username: "ibegbu emmanuel", password: "cmgs105", image: "cmgs105.jpg", paid: true},
+            {username: "ajayi convenant", password: "cmgs106", image: "cmgs106.jpg", paid: true},
+            {username: "fadirepo elizabeth", password: "cmgs107", image: "cmgs107.jpg", paid: true},
+
+            // JSS1 GIRLS (Mix of paid/unpaid)
+            {username: "david grace", password: "cmgs108", image: "cmgs108.jpg", paid: true},
+            {username: "adepoju kemisola", password: "cmgs109", image: "cmgs109.jpg", paid: true},
+            {username: "ayodele adeife peace", password: "cmgs110", image: "cmgs110.jpg", paid: true},
+            {username: "fakorede fikayo esther", password: "cmgs111", image: "cmgs111.jpg", paid: true},
+            {username: "adewunmi darasimi", password: "cmgs112", image: "cmgs112.jpg", paid: true},
+
+            // JSS2 BOYS (All Paid)
+            {username: "ojo ayomide", password: "cmgs201", image: "cmgs201.jpg", paid: true},
+            {username: "olatise excel", password: "cmgs202", image: "cmgs202.jpg", paid: true},
+            {username: "adewunmi tunmise", password: "cmgs203", image: "cmgs203.jpg", paid: true},
+            {username: "eyebiokin tobiloba", password: "cmgs204", image: "cmgs204.jpg", paid: true},
+            {username: "oluwafemi nifemi", password: "cmgs205", image: "cmgs205.jpg", paid: true},
+            {username: "oluwatuyi olamide", password: "cmgs206", image: "cmgs206.jpg", paid: true},
+            {username: "abiodun praise", password: "cmgs207", image: "cmgs207.jpg", paid: true},
+            {username: "adejumo adenike", password: "cmgs208", image: "cmgs208.jpg", paid: true},
+            {username: "david mercy", password: "cmgs209", image: "cmgs209.jpg", paid: true},
+            {username: "olusanya semilore", password: "cmgs210", image: "cmgs210.jpg", paid: true},
+            {username: "ajibola demilade", password: "cmgs211", image: "cmgs211.jpg", paid: true},
+            {username: "afeni dunusinmi", password: "cmgs212", image: "cmgs212.jpg", paid: true},
+            {username: "bashiru qudus", password: "cmgs213", image: "cmgs213.jpg", paid: true},
+            {username: "owolabi olamide", password: "cmgs214", image: "cmgs214.jpg", paid: true},
+            {username: "erinfolami precious", password: "cmgs215", image: "cmgs215.jpg", paid: true},
+            {username: "ajiboye aanu", password: "cmgs216", image: "cmgs216.jpg", paid: true},
+            {username: "isa godiya", password: "cmgs217", image: "cmgs217.jpg", paid: true},
+
+            // JSS3 BOYS (Mix of paid/unpaid)
+            {username: "abdullah kehinde", password: "cmgs301", image: "cmgs301.jpg", paid: true},
+            {username: "abiodun paul", password: "cmgs302", image: "cmgs302.jpg", paid: true},
+            {username: "aluko taiwo", password: "cmgs303", image: "cmgs303.jpg", paid: true},
+            {username: "ojo emmanuel", password: "cmgs304", image: "cmgs304.jpg", paid: true},
+            {username: "olajide daniel", password: "cmgs305", image: "cmgs305.jpg", paid: true},
+            {username: "olanrewaju isreal", password: "cmgs306", image: "cmgs306.jpg", paid: true},
+            {username: "olatunji samuel", password: "cmgs307", image: "cmgs307.jpg", paid: true},
+            {username: "harris peace", password: "cmgs308", image: "cmgs308.jpg", paid: true},
+            {username: "abdullah taiwo", password: "cmgs309", image: "cmgs309.jpg", paid: true},
+            {username: "adejumo azeezat", password: "cmgs310", image: "cmgs310.jpg", paid: true},
+            {username: "ajogo esther", password: "cmgs311", image: "cmgs311.jpg", paid: true},
+            {username: "alonge ayanfeoluwa", password: "cmgs312", image: "cmgs312.jpg", paid: true},
+            {username: "aluko kehinde", password: "cmgs313", image: "cmgs313.jpg", paid: true},
+            {username: "asaolu sefunmi", password: "cmgs314", image: "cmgs314.jpg", paid: true},
+            {username: "ayodele sekemi", password: "cmgs315", image: "cmgs315.jpg", paid: true},
+            {username: "isa godiya", password: "cmgs316", image: "cmgs316.jpg", paid: true},
+            {username: "okunola darasimi", password: "cmgs317", image: "cmgs317.jpg", paid: true},
+            {username: "oyinloye ibironke", password: "cmgs318", image: "cmgs318.jpg", paid: true},
+            {username: "sesan ojo wisdom", password: "cmgs319", image: "cmgs319.jpg", paid: true},
+
+            // SS1 (All Paid)
+            {username: "john goodness", password: "cmgs401", image: "cmgs401.jpg", paid: true},
+            {username: "ibegbu cynthia", password: "cmgs402", image: "cmgs402.jpg", paid: true},
+            {username: "eniafe success", password: "cmgs403", image: "cmgs403.jpg", paid: true},
+            {username: "isa hauwa kezia", password: "cmgs404", image: "cmgs404.jpg", paid: true},
+            {username: "best daniel", password: "cmgs405", image: "cmgs405.jpg", paid: true},
+            {username: "ogundana henry", password: "cmgs406", image: "cmgs406.jpg", paid: true},
+            {username: "olamide oluwaseun", password: "cmgs407", image: "cmgs407.jpg", paid: true},
+
+            // SS2 (Mix of paid/unpaid)
+            {username: "aluko crown", password: "cmgs501", image: "cmgs501.jpg", paid: true},
+            {username: "adejumo sodiq", password: "cmgs502", image: "cmgs502.jpg", paid: true},
+            {username: "ambrose godwin", password: "cmgs503", image: "cmgs503.jpg", paid: true},
+            {username: "bello george", password: "cmgs504", image: "cmgs504.jpg", paid: true},
+            {username: "fadirepo semilore", password: "cmgs505", image: "cmgs505.jpg", paid: true},
+            {username: "oke david", password: "cmgs506", image: "cmgs506.jpg", paid: true},
+            {username: "adeoye divine", password: "cmgs507", image: "cmgs507.jpg", paid: true},
+            {username: "awobiye eniola", password: "cmgs508", image: "cmgs508.jpg", paid: true},
+            {username: "kayode racheal", password: "cmgs509", image: "cmgs509.jpg", paid: true},
+            {username: "ojo eniope", password: "cmgs510", image: "cmgs510.jpg", paid: true},
+            {username: "ogundipe blessing", password: "cmgs511", image: "cmgs511.jpg", paid: true},
+            {username: "olanrewaju hepzibah", password: "cmgs512", image: "cmgs512.jpg", paid: true},
+            {username: "osasono desola", password: "cmgs513", image: "cmgs513.jpg", paid: true},
+
+            // SS3 (All Paid)
+            {username: "oltunji emmanuel", password: "cmgs601", image: "cmgs601.jpg", paid: true},
+            {username: "adewunmi nifemi", password: "cmgs602", image: "cmgs602.jpg", paid: true},
+            {username: "oluwafemi oluwatomiwa", password: "cmgs603", image: "cmgs603.jpg", paid: true},
+            {username: "foluso boluwatito", password: "cmgs604", image: "cmgs604.jpg", paid: true},
+            {username: "adejumo azeez", password: "cmgs605", image: "cmgs605.jpg", paid: true},
+            {username: "ajayi sandra", password: "cmgs606", image: "cmgs606.jpg", paid: true},
+            {username: "omole sefunmi", password: "cmgs607", image: "cmgs607.jpg", paid: true},
+            {username: "ayebegan ayobami", password: "cmgs608", image: "cmgs608.jpg", paid: true},
+            {username: "ojo success", password: "cmgs609", image: "cmgs609.jpg", paid: false},
+            
+            // ADMIN (always paid)
+            {username: "admin", password: "admin", image: "admin.png", paid: true}
+        ];
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+           
+            const username = document.getElementById('username').value.toLowerCase().trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const altCheck = document.getElementById('altLoginCheck');
+           
+            // Check if credentials match any user (case-insensitive username match)
+            const matchedUser = users.find(user =>
+                user.username.toLowerCase() === username && user.password === password
+            );
+          if (matchedUser) {
+                // Check if user has paid
+                if (matchedUser.paid === false) {
+                    alert("⚠️ You have not paid your school fees. You are not allowed access to the report portal.\n\nPlease contact the school administration to regularize your payment.");
+                    window.location.href = 'Debtors.html';
+                    //return; // Stop execution, don't redirect
                 }
-            });
+       
+         
+                            
+                // User has paid, proceed with login
+                // Store user data in sessionStorage for the main page to use
+                sessionStorage.setItem('loggedInUser', JSON.stringify(matchedUser));
+                sessionStorage.setItem('username', matchedUser.username);
+                sessionStorage.setItem('image', `img/${matchedUser.image}`); // Add img/ prefix
+                
+                console.log("✅ Login successful for paid user:", matchedUser.username);
+                
+                // Check if alt login checkbox is checked
+                if (altCheck.checked) {
+                    console.log("🔄 Running alternate validation...");
+                    validateLoginComparison(username, password);
+                } else {
+                    // Redirect to the main page
+                    window.location.href = 'final_instructions.html';
+                }
+            } else {
+                // Show error message
+                errorMessage.style.display = 'block';
+               
+                // Clear password field
+                document.getElementById('password').value = '';
+            }
         });
+
+        // =============================
+        // SECOND LOGIN METHOD (for comparison)
+        // =============================
+        function validateLoginComparison(username, password) {
+            if (!username || !password) {
+                alert("Please enter both username and password.");
+                return;
+            }
+
+            const user = users.find(
+                (u) => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+            );
+
+            if (user) {
+                // Check if user has paid
+                if (user.paid === false) {
+                    alert("⚠️ You have not paid your school fees. You are not allowed access to the report portal.\n\nPlease contact the school administration to regularize your payment.");
+                       window.location.href = "Debtors.html";
+                    return;
+                }
+                
+                // Store again to ensure both formats are available
+                sessionStorage.setItem('username', user.username);
+                sessionStorage.setItem('image', `img/${user.image}`); // Add img/ prefix
+                console.log("✅ Alternate validation passed for paid user");
+                window.location.href = 'final_instruction.html';
+            } else {
+                alert("Invalid username or password in alternate check.");
+            }
+        }
+
     </script>
 </body>
 </html>

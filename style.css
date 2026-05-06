@@ -1,0 +1,28 @@
+body {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  background-image:url("img/lab3.png");
+  background-size:cover;
+  font-family:sans-serif;
+}
+
+.main {
+  background:#fff;
+  padding:30px;
+  border-radius:10px;
+  width:300px;
+  text-align:center;
+}
+
+input {
+  width:90%;
+  margin:10px;
+  padding:10px;
+}
+
+button {
+  width:95%;
+  padding:10px;
+}

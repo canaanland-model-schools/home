@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="fav_icon2.ico">
+    <title>cbt.canaanlandmodelschools.org - Exam Results</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+       
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f8f0 0%, #e6f3ff 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+       
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('img/mainlogo.png') no-repeat center center;
+            background-size: 300px 300px;
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+       
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+       
+        header {
+            background: linear-gradient(to right, blue, aqua);
+            color: white;
+            padding: 20px 0;
+            border-bottom: 5px solid #ff9800;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+       
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('img/Ctemplogo.png') no-repeat center center;
+            background-size: 200px 200px;
+            opacity: 0.1;
+            z-index: 0;
+        }
+       
+        .logo-container {
+            position: relative;
+            z-index: 1;
+        }
+       
+        .logo-container img {
+            max-width: 180px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+       
+        .school-name {
+            margin-top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+       
+        .exam-info-header {
+            background: linear-gradient(blue, aqua, fuchsia);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #ff9800;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+       
+        .exam-info-header h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+       
+        .exam-info-header p {
+            margin: 10px 0 0 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+       
+        .student-info-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+       
+        .student-image-container {
+            text-align: center;
+            flex: 0 0 auto;
+        }
+       
+        .student-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid #4a0080;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+       
+        .student-image:hover {
+            transform: scale(1.05);
+        }
+       
+        .student-details {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+       
+        .student-name {
+            font-size: 28px;
+            color: #4a0080;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+       
+        .congratulations {
+            font-size: 22px;
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+       
+        .score-message {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+       
+        .exam-date {
+            font-size: 16px;
+            color: #777;
+            font-style: italic;
+        }
+       
+        .score-container {
+            text-align: center;
+            margin: 40px 0;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+       
+        .score-title {
+            font-size: 32px;
+            color: #4a0080;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+       
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s ease;
+        }
+       
+        .score-circle:hover {
+            transform: scale(1.05);
+        }
+       
+        .score-percentage {
+            font-size: 24px;
+            margin-top: 15px;
+            color: #555;
+        }
+       
+        .performance-message {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+       
+        .details-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+       
+        .detail-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+       
+        .detail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+       
+        .detail-card h3 {
+            color: #4a0080;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+       
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+       
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+       
+        .detail-value {
+            color: #333;
+        }
+       
+        .actions-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+       
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            background: #4a0080;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+       
+        .btn:hover {
+            background: #6a00b3;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+       
+        .btn-secondary {
+            background: #ff9800;
+        }
+       
+        .btn-secondary:hover {
+            background: #ffad33;
+        }
+       
+        .btn-success {
+            background: #28a745;
+        }
+       
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-copy {
+            background: #17a2b8;
+        }
+       
+        .btn-copy:hover {
+            background: #138496;
+        }
+       
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #e0e0e0;
+        }
+       
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.1;
+            font-size: 120px;
+            font-weight: bold;
+            color: #4a0080;
+            transform: rotate(-15deg);
+            pointer-events: none;
+            z-index: 0;
+        }
+       
+        .confirmation-section {
+            background: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+       
+        .confirmation-message {
+            font-size: 18px;
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+       
+        @media (max-width: 768px) {
+            .student-info-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+           
+            .student-details {
+                min-width: 100%;
+            }
+           
+            .score-circle {
+                width: 150px;
+                height: 150px;
+                font-size: 36px;
+            }
+           
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 80%;
+                max-width: 300px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+           
+            .watermark {
+                font-size: 80px;
+            }
+        }
+       
+        /* Animation for score reveal */
+        @keyframes scoreReveal {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+       
+        .score-circle {
+            animation: scoreReveal 1s ease-out;
+        }
+       
+        /* Animation for congratulations message */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+       
+        .congratulations {
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+       
+        .score-message {
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+        }
+
+        .logout-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: crimson;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            background: aqua;
+            padding: 10px 0;
+        }
+    
+        /* Moving text animation */
+        .marquee-text {
+            display: inline-block;
+            color: fuchsia;
+            font-size: 24px;
+            font-weight: bold;
+            animation: marquee 10s linear infinite;
+        }
+
+        /* Keyframes for moving text */
+        @keyframes marquee {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Toast notification style */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: fadeInOut 2s ease-in-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">RESULTS</div>
+   
+    <header>
+        <div class="logo-container">
+            <img src="img/Ctemplogo.png" alt="School Logo">
+            <div class="school-name">CANAANLAND MODEL SCHOOLS</div>
+        </div>
+         <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+   
+    <div class="container">
+        <div class="marquee-container">
+            <span class="marquee-text">CANAANLAND GROUP OF SCHOOLS : GOD IS OUR STRENGTH</span>
+        </div>
+        <div class="exam-info-header">   
+            <h2 id="examInfoHeader">EXAMINATION RESULTS</h2>
+            <p id="examDetails">Loading exam information...</p>
+        </div>
+       
+        <div class="student-info-container">
+            <div class="student-image-container">
+                <img id="studentImage" src="img/default_user.jpg" alt="Student Image" class="student-image">
+            </div>
+            <div class="student-details">
+                <h1 id="studentName" class="student-name">Student Name</h1>
+                <div id="congratulationsMessage" class="congratulations">Congratulations!</div>
+                <div id="scoreMessage" class="score-message">You've successfully completed your test</div>
+                <div id="examDate" class="exam-date">Date: Loading...</div>
+            </div>
+        </div>
+       
+        <!-- Confirmation Section with Two Buttons -->
+        <div class="confirmation-section" id="confirmationSection">
+            <div class="confirmation-message">
+                📝 <strong>Important:</strong> Please confirm your exam attempt by clicking the button below.
+                This will mark your exam as completed.
+            </div>
+            <div class="button-group">
+                <!--<button class="btn btn-copy" onclick="copyDataOnly()">
+                    <i class="fa-solid fa-copy"></i> 📋 Copy Data Only
+                </button>-->
+                <button class="btn btn-success" onclick="confirmAndCopy()">
+                    <i class="fa-solid fa-check-circle"></i> ✅ OK (Copy & Continue)
+                </button>
+            </div>
+        </div>
+       
+        <div class="score-container">
+            <h2 class="score-title">EXAMINATION RESULT</h2>
+            <div id="scoreCircle" class="score-circle" style="background: linear-gradient(blue, aqua, fuchsia);">
+                <span id="scoreValue">0</span>/<span id="totalQuestions">0</span>
+            </div>
+            <div id="scorePercentage" class="score-percentage">0%</div>
+            <div id="performanceMessage" class="performance-message" style="background-color: #e0e0e0; color: #333;">Performance Loading...</div>
+        </div>
+    </div>
+   
+    <footer>
+        <p>&copy; 2026 cbt.canaanland model schools.org - All rights reserved</p>
+        <p>Computer-Based Testing Portal - canaanland model Schools</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // Helper function to show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.backgroundColor = isError ? '#dc3545' : '#28a745';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+
+        // Helper function to convert class/subject to filename friendly format
+        function formatForFilename(text) {
+            if (!text) return '';
+            // Convert to lowercase, replace spaces with underscores, remove special characters
+            return text.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+        }
+
+        // Helper function to get student data object
+        function getStudentData() {
+            const cls = localStorage.getItem("pendingClass");
+            const sub = localStorage.getItem("pendingSubject");
+            const username = localStorage.getItem("pendingUsername");
+            const score = localStorage.getItem('examScore') || 0;
+            const totalQuestions = localStorage.getItem('totalQuestions') || 5;
+            const percentage = Math.round((score / totalQuestions) * 100);
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-US');
+            
+            // Get performance grade
+            let grade = '';
+            if (percentage >= 80) grade = 'EXCELLENT';
+            else if (percentage >= 60) grade = 'GOOD';
+            else if (percentage >= 50) grade = 'FAIR';
+            else grade = 'POOR';
+            
+            // Generate dynamic URL based on class and subject
+            const formattedClass = formatForFilename(cls);
+            const formattedSubject = formatForFilename(sub);
+            const dynamicUrl = `${formattedClass}_${formattedSubject}_exam_scores.html`;
+            
+            return {
+                cls: cls,
+                sub: sub,
+                username: username,
+                score: score,
+                totalQuestions: totalQuestions,
+                percentage: percentage,
+                grade: grade,
+                formattedDate: formattedDate,
+                dynamicUrl: dynamicUrl,
+                copyString: `${username}|${cls}|${sub}|${score}|${totalQuestions}|${percentage}%|${grade}|${formattedDate}`
+            };
+        }
+
+        // ✅ FUNCTION: ONLY copies data to clipboard - NO redirect, NO mark as completed
+        function copyDataOnly() {
+            const data = getStudentData();
+            
+            if (!data.cls || !data.sub || !data.username) {
+                showToast("❌ Error: Could not get student data. Please contact administrator.", true);
+                return;
+            }
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(data.copyString).then(() => {
+                console.log("Data copied to clipboard:", data.copyString);
+                showToast("✅ Data copied to clipboard! Format: Name|Class|Subject|Score|Total|Percentage|Grade|Date");
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast("❌ Failed to copy data. Please try again.", true);
+            });
+        }
+
+        // ✅ FUNCTION: Copies data AND marks exam as completed AND redirects dynamically
+        function confirmAndCopy() {
+            const data = getStudentData();
+           
+            if (!data.cls || !data.sub || !data.username) {
+                showToast("❌ Error: Could not confirm attempt. Please contact administrator.", true);
+                return;
+            }
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(data.copyString).then(() => {
+                console.log("Data copied to clipboard:", data.copyString);
+                console.log("Dynamic URL to redirect to:", data.dynamicUrl);
+                
+                // Mark the exam as completed
+                markExamCompleted(data.cls, data.sub, data.username);
+                
+                // Remove pending flags
+                localStorage.removeItem("pendingClass");
+                localStorage.removeItem("pendingSubject");
+                localStorage.removeItem("pendingUsername");
+                
+                // Hide confirmation section
+                const confirmationSection = document.getElementById("confirmationSection");
+                if (confirmationSection) {
+                    confirmationSection.style.display = "none";
+                }
+                
+                // Show success message with redirect info
+                showToast(`✅ Data copied! Redirecting to ${data.dynamicUrl}...`);
+                
+                // Redirect to the dynamic data entry page after a short delay
+                setTimeout(() => {
+                    window.location.href = data.dynamicUrl;
+                }, 1000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast("❌ Failed to copy data. Please try again.", true);
+            });
+        }
+
+        // ✅ Helper functions for attempt tracking
+        function getExamAttempts(cls) {
+            const key = `${cls}_exam_attempts`;
+            const stored = localStorage.getItem(key);
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveExamAttempts(cls, data) {
+            const key = `${cls}_exam_attempts`;
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function markExamCompleted(cls, sub, username) {
+            const attempts = getExamAttempts(cls);
+            if (!attempts[username]) {
+                attempts[username] = {};
+            }
+            attempts[username][sub] = true;
+            saveExamAttempts(cls, attempts);
+            console.log(`Exam attempt marked as completed for ${username} - ${sub} in ${cls}`);
+        }
+
+        // Get data from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get exam information
+            const examInfo = localStorage.getItem('examInfo') || '';
+            const examClass = localStorage.getItem('examClass') || '';
+            const examSubject = localStorage.getItem('examSubject') || '';
+           
+            // Display exam information
+            document.getElementById('examInfoHeader').textContent = examSubject ? `${examSubject.toUpperCase()} EXAMINATION RESULTS` : 'EXAMINATION RESULTS';
+            document.getElementById('examDetails').textContent = examInfo || 'Exam Results';
+           
+            // Get student information
+            const username = localStorage.getItem('examUser') || sessionStorage.getItem('username') || 'Student';
+            const userImage = sessionStorage.getItem('image') || 'default_user.jpg';
+           
+            // Get exam results
+            const score = localStorage.getItem('examScore') || 0;
+            const totalQuestions = localStorage.getItem('totalQuestions') || 5;
+           
+            // Calculate percentage
+            const percentage = Math.round((score / totalQuestions) * 100);
+           
+            // Set student information
+            document.getElementById('studentName').textContent = username;
+            document.getElementById('studentImage').src = sessionStorage.getItem('image') || 'img/default_user.jpg';
+           
+            // Set score information
+            document.getElementById('scoreValue').textContent = score;
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+           
+            // Update score message with actual score
+            document.getElementById('scoreMessage').textContent =
+                `You've successfully completed your test and your score for this test is ${score}/${totalQuestions}`;
+           
+            // Set performance message and color
+            const performanceMessage = document.getElementById('performanceMessage');
+            const scoreCircle = document.getElementById('scoreCircle');
+           
+            if (percentage >= 80) {
+                performanceMessage.textContent = 'EXCELLENT PERFORMANCE!';
+                performanceMessage.style.backgroundColor = '#4CAF50';
+                performanceMessage.style.color = 'white';
+                scoreCircle.style.background = 'linear-gradient(135deg, #4CAF50, #8BC34A)';
+            } else if (percentage >= 60) {
+                performanceMessage.textContent = 'GOOD PERFORMANCE';
+                performanceMessage.style.backgroundColor = '#2196F3';
+                performanceMessage.style.color = 'white';
+                scoreCircle.style.background = 'linear-gradient(135deg, #2196F3, #03A9F4)';
+            } else if (percentage >= 50) {
+                performanceMessage.textContent = 'FAIR PERFORMANCE';
+                performanceMessage.style.backgroundColor = '#FF9800';
+                performanceMessage.style.color = 'white';
+                scoreCircle.style.background = 'linear-gradient(135deg, #FF9800, #FFC107)';
+            } else {
+                performanceMessage.textContent = 'NEEDS IMPROVEMENT';
+                performanceMessage.style.backgroundColor = '#F44336';
+                performanceMessage.style.color = 'white';
+                scoreCircle.style.background = 'linear-gradient(135deg, #F44336, #E91E63)';
+            }
+           
+            // Set current date
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-US', options);
+           
+            document.getElementById('examDate').textContent = 'Date: ' + formattedDate;
+           
+            // Check if attempt is already confirmed
+            const cls = localStorage.getItem("pendingClass");
+            const sub = localStorage.getItem("pendingSubject");
+            const usernameCheck = localStorage.getItem("pendingUsername");
+           
+            if (!cls || !sub || !usernameCheck) {
+                // Attempt already confirmed, hide confirmation section
+                const confirmationSection = document.getElementById("confirmationSection");
+                if (confirmationSection) {
+                    confirmationSection.style.display = "none";
+                }
+            }
+            
+            // Log the dynamic URL that would be used (for debugging)
+            if (cls && sub) {
+                const formattedClass = formatForFilename(cls);
+                const formattedSubject = formatForFilename(sub);
+                console.log(`This exam is for: ${cls} - ${sub}`);
+                console.log(`Will redirect to: ${formattedClass}_${formattedSubject}_exam_scores.html`);
+            }
+        });
+
+        function logout() {
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

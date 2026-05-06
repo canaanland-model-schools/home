@@ -1,0 +1,646 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="fav_icon2.ico">
+    <title>cbt.canaanlandmodelschools.org</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Keep all your existing styles intact */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+       
+        :root {
+            --primary-color: #008000;
+            --secondary-color: #d90000;
+            --background-color: rgb(50,125,50);
+            --text-color: #333;
+            --card-bg: white;
+            --header-bg: rgb(50,125,50);
+            --header-text: white;
+            --nav-bg: #006400;
+            --input-border: #ddd;
+        }
+       
+        .dark-theme {
+            --primary-color: #4CAF50;
+            --secondary-color: #ff5252;
+            --background-color: #2c2c2c;
+            --text-color: #f0f0f0;
+            --card-bg: #3c3c3c;
+            --header-bg: rgb(50,125,50);
+            --header-text: #f0f0f0;
+            --nav-bg: #1b5e20;
+            --input-border: #555;
+        }
+       
+        body {
+            position: relative;
+            z-index: 1;
+        }
+       
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('img/Ctemplogo.png') no-repeat center center;
+            background-size: 300px 300px;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+            background-color: white;
+            align-items: center;
+            text-align: center;
+        }
+       
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+       
+        nav {
+            background-color: var(--nav-bg);
+            padding: 15px 0;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+       
+        #student-image {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+       
+        header {
+            background-color: blue;
+            color: var(--header-text);
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+       
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+       
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+            border: 2px solid var(--secondary-color);
+        }
+       
+        .welcome-message {
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-left: 5px solid var(--secondary-color);
+            margin: 20px 0;
+            font-size: 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+       
+        .welcome-message img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+            border: 3px solid var(--primary-color);
+        }
+       
+        .exam-sections {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+       
+        .exam-section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            overflow: hidden;
+            min-width: 300px;
+        }
+       
+        .section-header {
+            background-color: blue;
+            color: var(--header-text);
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+       
+        .section-body {
+            padding: 25px;
+        }
+       
+        select, input[type="password"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 15px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+       
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+       
+        .btn:hover {
+            background-color: var(--nav-bg);
+        }
+       
+        .btn-secondary {
+            background-color: #007bff;
+        }
+       
+        .btn-secondary:hover {
+            background-color: #0056b3;
+        }
+       
+        .btn-danger {
+            background-color: #dc3545;
+        }
+       
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+       
+        .windows-activate {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-color);
+            font-size: 14px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+       
+        @media (max-width: 900px) {
+            .exam-sections {
+                flex-direction: column;
+            }
+        }
+       
+        .logout-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: crimson;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+       
+        .admin-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+       
+        .attempt-status {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+       
+        .completed {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+       
+        .available {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+        
+            <button class="logout-btn" onclick="logout()">Logout</button>
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="img/Ctemplogo.png" alt="School Logo">
+                </div>
+            </div>
+            <p>2025/2026 SECOND TERM COMPUTER BASED TEST EXAMINATION</p>
+        </header>
+       
+        <div class="welcome-message">
+            <img id="userImage" src="img/default_user.jpg" alt="Student Photo"><br>
+            <h2>WELCOME: <span id="user">Student</span></h2>
+            <div id="attemptStatus" class="attempt-status"></div>
+        </div>
+
+        <!-- 3 selection boxes side by side -->
+        <div class="exam-sections">
+            <div class="exam-section">
+                <div class="section-header">SELECT CLASS □</div>
+                <div class="section-body">
+                    <label>Select Class:</label>
+                    <select id="classSelect" onchange="updateAttemptStatus()">
+                        <option value="">-- Select Class --</option>
+                        <option value="ss1">SS1 (Senior Secondary School 1)</option>
+                        <option value="ss2">SS2 (Senior Secondary School 2)</option>
+                        <option value="ss3">SS3 (Senior Secondary School 3)</option>
+                    </select>
+                </div>
+            </div>
+           
+            <div class="exam-section">
+                <div class="section-header">SELECT SUBJECT □</div>
+                <div class="section-body">
+                    <label>Select Subject:</label>
+                    <select id="subjectSelect" onchange="updateAttemptStatus()">
+                        <option value="">-- Select Subject --</option>
+                        <option value="demo">Demo</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="english_language">English Language</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="biology">Biology</option>
+                        <!--<option value="cultural_art">Cultural & Creative Art</option>-->
+                        <option value="yoruba">Yoruba</option>
+                        <option value="citizenship_education">Citizenship | Heritage Studies </option>
+                        <option value="livestock_farming">Livestock Farming</option>
+                       <!-- <option value="agricultural_science">Agricultural Science</option>-->
+                        <option value="literature_in_english">Literature in English</option>  
+                        <option value="crs">Christian Religious Studies</option>
+                        <option value="physics">Physics</option>
+                        <option value="digital_technology">Digital Technology</option>
+                        <option value="economics">Economics</option>
+                       
+                      
+                        <option value="geography">Geography</option>
+                      
+                        <option value="account">Financial Acounting</option>
+                        <option value="government">Government</option>
+                        <option value="commerce">Commerce</option>
+                       
+                        <option value="marketing">Marketing</option>
+                        <option value="fine_art">Fine Art</option>
+                        <option value="further_mathematics">Further Mathematics</option>
+                        <option value="history">Nigerian History</option>
+                        <option value="phonetics">Phonetics</option>
+                        <!--<option value="garment_making">Garment Making</option>-->
+                        <!--<option value="book_keeping">Book Keeping</option>-->
+                        <option value="agricultural_science">Agric sciences</option>
+                    </select>
+                </div>
+            </div>
+           
+            <div class="exam-section">
+                <div class="section-header">SELECT EXAM TYPE □</div>
+                <div class="section-body">
+                    <label>Select Exam Type:</label>
+                    <select id="typeSelect">
+                        <option value="objectives">Objectives/Theory</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ PASSWORD SECTION MOVED BELOW -->
+        <div class="exam-section" style="max-width: 500px; margin: 0 auto;">
+            <div class="section-header">ENTER PASSWORD □</div>
+            <div class="section-body">
+                <label style="color: var(--secondary-color);">Enter Password:</label>
+                <input type="password" id="examPassword" placeholder="Enter subject password">
+            </div>
+        </div>
+       
+        <center>
+            <button class="btn" id="startExamBtn" onclick="startExam()">
+                <i class="fa-solid fa-play"></i> Start Exam
+            </button>
+        </center>
+       
+        <div class="windows-activate">
+            <p>&copy; 2026 cbt.canaanlandmodelschools.org</p>
+        </div>
+    </div>
+
+<script>
+  const username = sessionStorage.getItem('username');
+    const imageName = sessionStorage.getItem('image');
+    const password = sessionStorage.getItem('password');
+    
+    // Redirect if not logged in
+    if (!username) {
+        alert("Please log in first.");
+        window.location.href = "index.html";
+    }
+    
+    document.getElementById('user').innerText = username || 'Student';
+    /* 🔧 CHANGE: Use imageName directly (already contains 'img/') instead of adding extra 'img/' prefix */
+    document.getElementById('userImage').src = imageName || 'img/default_user.jpg';
+
+    // ✅ UPDATED: Different passwords for each class and subject combination
+    const classSubjectPasswords = {
+        ss1: {
+            demo: "9b2f7c",
+            mathematics: "x8q3r5",
+            english_language: "p4t9k1",
+            citizenship_education: "m6v2w8",
+            physics: "j5h7s3",
+            digital_technology: "n1d4z9",
+            economics: "l8c6b2",
+            livestock_farming: "a3f5y7",
+            chemistry: "e9g2q4",
+            biology: "r7k1m6",
+            cultural_art: "t2w8p3",
+            yoruba: "y5n7b9",
+            geography: "v4c2x6",
+            crs: "s8d1f3",
+            account: "z6h9l5",
+            government: "q3m7p2",
+            commerce: "w1b4t8",
+            phonetics: "5h9c4b",
+            literature_in_english: "k9j2r7",
+            marketing: "f5v3n6",
+            fine_art: "d7p4t2",
+            book_keeping: "b3m8q6",
+            further_mathematics: "g2n7k4",
+            garment_making: "h8t1w5",
+            history: "j6r3m9",
+            agricultural_science: "00000",
+            default: "11111"
+        },
+        ss2: {
+            demo: "4r9t2x",
+            mathematics: "s7p1k8",
+            english_language: "b3w6m9",
+            citizenship_education: "d5v2c7",
+            physics: "h8t4q1",
+            digital_technology: "j2z6r9",
+            economics: "l7x3p5",
+            livestock_farming: "m9b1w4",
+            chemistry: "q5k8t2",
+            biology: "r3n6v9",
+            cultural_art: "t8f1c4",
+            yoruba: "w2y7m5",
+            geography: "x6g9s3",
+            crs: "z4b8p1",
+            account: "c1m7t6",
+            government: "v5r3k9",
+            commerce: "n8d2w7",
+            phonetics: "8s3je1",
+            literature_in_english: "p9h4q6",
+            marketing: "k3s8b2",
+            fine_art: "m2t7v1",
+            book_keeping: "q6b4n9",
+            further_mathematics: "w3j8k5",
+            garment_making: "f7d2r4",
+            history: "h5n1t8",
+            agricultural_science: "00000",
+            default: "11111"
+        },
+        ss3: {
+            demo: "7m3q9p",
+            mathematics: "t2v6k8",
+            english_language: "b8w1c5",
+            citizenship_education: "d4r9s2",
+            physics: "f7n3m6",
+            digital_technology: "h5x8t1",
+            economics: "j2q7b9",
+            livestock_farming: "l6v4p8",
+            chemistry: "n9m2c3",
+            biology: "p5t8r4",
+            cultural_art: "r1w6s9",
+            yoruba: "t3k7v2",
+            geography: "v8d4b1",
+            crs: "x6f9m5",
+            account: "z2p7q3",
+            government: "c4h8t9",
+            commerce: "q9b3n6",
+            phonetics: "y5v6x3",
+            literature_in_english: "s5m1r8",
+            marketing: "w7k4d2",
+            fine_art: "g3p6t1",
+            book_keeping: "j8m4w2",
+            further_mathematics: "v5t9r3",
+            garment_making: "n2b7k4",
+            history: "f8d3q6",
+            agricultural_science: "00000",
+            default: "11111"
+        }
+    };
+
+    // ✅ Mark exam as completed
+    function markExamCompleted(cls, sub, username) {
+        const attempts = getExamAttempts(cls);
+        if (!attempts[username]) {
+            attempts[username] = {};
+        }
+        attempts[username][sub] = true;
+        saveExamAttempts(cls, attempts);
+    }
+
+    // ✅ Enhanced attempt tracking system
+    function getExamAttempts(cls) {
+        const key = `${cls}_exam_attempts`;
+        const stored = localStorage.getItem(key);
+        return stored ? JSON.parse(stored) : {};
+    }
+
+    function saveExamAttempts(cls, data) {
+        const key = `${cls}_exam_attempts`;
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    function hasCompletedExam(cls, sub, username) {
+        const attempts = getExamAttempts(cls);
+        return attempts[username] && attempts[username][sub] === true;
+    }
+
+    function updateAttemptStatus() {
+        const cls = document.getElementById("classSelect").value.toLowerCase();
+        const sub = document.getElementById("subjectSelect").value.toLowerCase();
+        const statusElement = document.getElementById("attemptStatus");
+        
+        if (!cls || !sub) {
+            statusElement.innerHTML = "Please select both class and subject";
+            statusElement.className = "attempt-status";
+            return;
+        }
+        
+        if (hasCompletedExam(cls, sub, username)) {
+            statusElement.innerHTML = "❌ You have already completed this exam.";
+            statusElement.className = "attempt-status completed";
+        } else {
+            statusElement.innerHTML = "✅ This exam is available for you to take";
+            statusElement.className = "attempt-status available";
+        }
+    }
+
+    function startExam() {
+        const cls = document.getElementById("classSelect").value.toLowerCase();
+        const sub = document.getElementById("subjectSelect").value.toLowerCase();
+        const type = document.getElementById("typeSelect").value.toLowerCase();
+        const pass = document.getElementById("examPassword").value.trim();
+
+        if (!cls || !sub || !pass) {
+            alert("Please complete all selections before starting your exam.");
+            return;
+        }
+
+        // ✅ UPDATED: Get password for specific class and subject
+        const classPasswords = classSubjectPasswords[cls];
+        if (!classPasswords) {
+            alert("❌ Invalid class selected!");
+            return;
+        }
+
+        const correctPassword = classPasswords[sub];
+        if (!correctPassword) {
+            alert("❌ No password configured for this subject in the selected class!");
+            return;
+        }
+
+        if (pass !== correctPassword) {
+            alert("❌ Incorrect password for this class and subject combination!");
+            return;
+        }
+
+        // Check completed exam
+        if (hasCompletedExam(cls, sub, username)) {
+            alert("⚠️ You have already completed this exam.");
+            window.location.href = "exam_attempted.html";
+            return;
+        }
+
+        // Save data
+        sessionStorage.setItem("class", cls);
+        sessionStorage.setItem("subject", sub);
+        sessionStorage.setItem("type", type);
+        sessionStorage.setItem("examInfo", `${formatSubjectName(sub)} - ${cls.toUpperCase()} (FIRST TERM)`);
+
+        localStorage.setItem("examClass", cls);
+        localStorage.setItem("examSubject", formatSubjectName(sub));
+        localStorage.setItem("pendingAttempt", "true");
+
+        const redirectUrl = `${cls}_${sub}_exam.html`;
+
+        // 🔍 CHECK IF THE FILE EXISTS BEFORE REDIRECTING
+        fetch(redirectUrl, { method: "HEAD" })
+            .then(response => {
+                if (response.ok) {
+                    // File exists → redirect normally
+                    alert(`✅ Access granted! Redirecting to exam...`);
+                    window.location.href = redirectUrl;
+                } else {
+                    // File missing → send user to landing page
+                    alert("⚠️ Exam page not available yet. Redirecting...");
+                    window.location.href = "landing.html";
+                }
+            })
+            .catch(() => {
+                // If fetch fails completely
+                alert("⚠️ Exam page not available yet. Redirecting...");
+                window.location.href = "landing.html";
+            });
+    }
+
+    function formatSubjectName(subject) {
+        const subjectMap = {
+            'demo': 'Demo',
+            'mathematics': 'Mathematics',
+            'english_language': 'English Language',
+            'citizenship_education': 'Citizenship Education',
+            'physics': 'Physics',
+            'digital_technology': 'Digital & Computer Technology',
+            'economics': 'Economics',
+            'livestock_farming': 'Livestock Farming',
+            'chemistry': 'Chemistry',
+            'biology': 'Biology',
+            'cultural_art': 'Cultural & Creative Art',
+            'yoruba': 'Yoruba',
+            'geography': 'Geography',
+            'crs': 'Christian Religious Studies',
+            'account': 'Financial Accounting',
+            'government': 'Government',
+            'commerce': 'Commerce',
+            'literature_in_english': 'Literature in English',
+            'marketing': 'Marketing',
+            'fine_art': 'Fine Art',
+            'book_keeping': 'book_keeping',
+            'further_mathematics': 'Further Mathematics',
+            'garment_making': 'garment_making',
+            'history': 'Nigerian History',
+            'phonetics': 'Phonetics',
+            'agricultural_science' : 'Office Practices'
+        };
+        
+        return subjectMap[subject] || subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ');
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+    }
+
+    function goToAdmin() {
+        window.location.href = 'admin.html';
+    }
+</script>
+</body>
+</html>
