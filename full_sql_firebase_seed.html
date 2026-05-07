@@ -24,6 +24,11 @@
 
     h1{
       color:#4a0080;
+      margin-bottom:10px;
+    }
+
+    p{
+      line-height:1.6;
     }
 
     button{
@@ -41,12 +46,18 @@
       background:#6a00b3;
     }
 
+    button:disabled{
+      background:gray;
+      cursor:not-allowed;
+    }
+
     #status{
       margin-top:20px;
       padding:15px;
       background:#f0f0f0;
       border-radius:8px;
       white-space:pre-wrap;
+      line-height:1.6;
     }
 
     .success{
@@ -58,27 +69,41 @@
       background:#f8d7da !important;
       color:#721c24;
     }
+
+    .loading{
+      background:#fff3cd !important;
+      color:#856404;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
+
   <h1>🔥 Firebase Full SQL Seeder</h1>
 
   <p>
-    This script uploads your CBT SQL structure into Firebase Firestore.
+    This uploads your CBT SQL database structure into Firebase Firestore.
   </p>
 
-  <button onclick="seedDatabase()">
+  <button id="uploadBtn" onclick="seedDatabase()">
     Upload Full Database
   </button>
 
   <div id="status">Waiting...</div>
+
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+/* ======================================================
+   FIREBASE IMPORTS
+====================================================== */
+
+import {
+  initializeApp,
+  getApps
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
   getFirestore,
@@ -92,10 +117,13 @@ import {
 ====================================================== */
 
 const status = document.getElementById("status");
+const uploadBtn = document.getElementById("uploadBtn");
 
 function updateStatus(message, type = "") {
+
   status.className = type;
   status.innerText = message;
+
 }
 
 
@@ -122,7 +150,11 @@ let db;
 
 try {
 
-  app = initializeApp(firebaseConfig);
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApps()[0];
+  }
 
   db = getFirestore(app);
 
@@ -133,8 +165,10 @@ try {
   console.error(error);
 
   updateStatus(
-    "❌ Firebase initialization failed:\n\n" + error.message,
-    "error"
+`❌ FIREBASE INITIALIZATION FAILED
+
+${error.message}`,
+  "error"
   );
 
 }
@@ -166,7 +200,7 @@ const subjects = [
 
 
 /* ======================================================
-   ENABLE SETTINGS
+   EXAM ENABLE
 ====================================================== */
 
 const examEnable = {};
@@ -245,6 +279,7 @@ examTime["crs"] = 30;
 const sampleRecords = {
 
   admin1: {
+
     student_name: "Admin1",
     class: "JSS1",
     exam_type: "Objectives",
@@ -257,9 +292,11 @@ const sampleRecords = {
     },
 
     created_at: new Date().toISOString()
+
   },
 
   admin2: {
+
     student_name: "Admin2",
     class: "JSS1",
     exam_type: "Objectives",
@@ -271,27 +308,62 @@ const sampleRecords = {
     },
 
     created_at: new Date().toISOString()
+
   }
 
 };
 
 
 /* ======================================================
-   SEED FUNCTION
+   EXAM ATTEMPT
+====================================================== */
+
+const examAttempt = {
+
+  admin: true,
+  student1: true,
+  student2: true
+
+};
+
+
+/* ======================================================
+   EXAM SCORES
+====================================================== */
+
+const examScores = {
+
+  admin: 45,
+  student1: 32,
+  student2: 50
+
+};
+
+
+/* ======================================================
+   SEED DATABASE
 ====================================================== */
 
 window.seedDatabase = async function () {
 
   try {
 
-    updateStatus("⏳ Starting upload...");
+    uploadBtn.disabled = true;
+
+    updateStatus(
+      "⏳ Starting database upload...",
+      "loading"
+    );
 
 
     /* ============================================
        EXAM ENABLE
     ============================================ */
 
-    updateStatus("Uploading exam_enable...");
+    updateStatus(
+      "Uploading exam_enable...",
+      "loading"
+    );
 
     await setDoc(
       doc(db, "exam_enable", "jss1"),
@@ -303,7 +375,10 @@ window.seedDatabase = async function () {
        PASSWORDS
     ============================================ */
 
-    updateStatus("Uploading exam_passwords...");
+    updateStatus(
+      "Uploading exam_passwords...",
+      "loading"
+    );
 
     for (const subject in passwords) {
 
@@ -321,7 +396,10 @@ window.seedDatabase = async function () {
        RANDOMIZE
     ============================================ */
 
-    updateStatus("Uploading exam_randomize...");
+    updateStatus(
+      "Uploading exam_randomize...",
+      "loading"
+    );
 
     await setDoc(
       doc(db, "exam_randomize", "jss1"),
@@ -333,7 +411,10 @@ window.seedDatabase = async function () {
        EXAM TIME
     ============================================ */
 
-    updateStatus("Uploading exam_time...");
+    updateStatus(
+      "Uploading exam_time...",
+      "loading"
+    );
 
     await setDoc(
       doc(db, "exam_time", "jss1"),
@@ -342,10 +423,13 @@ window.seedDatabase = async function () {
 
 
     /* ============================================
-       RECORDS
+       EXAM RECORDS
     ============================================ */
 
-    updateStatus("Uploading exam_records...");
+    updateStatus(
+      "Uploading exam_records...",
+      "loading"
+    );
 
     for (const student in sampleRecords) {
 
@@ -358,23 +442,59 @@ window.seedDatabase = async function () {
 
 
     /* ============================================
+       EXAM ATTEMPT
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_attempt...",
+      "loading"
+    );
+
+    await setDoc(
+      doc(db, "exam_attempt", "jss1_mathematics"),
+      examAttempt
+    );
+
+
+    /* ============================================
+       EXAM SCORES
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_scores...",
+      "loading"
+    );
+
+    await setDoc(
+      doc(db, "exam_scores", "jss1_mathematics"),
+      examScores
+    );
+
+
+    /* ============================================
        SUCCESS
     ============================================ */
 
     updateStatus(
 `✅ FULL DATABASE UPLOAD COMPLETE
 
-Collections Created:
+Collections Created Successfully:
 
 • exam_enable
 • exam_passwords
 • exam_randomize
 • exam_time
 • exam_records
+• exam_attempt
+• exam_scores
 
-All subjects + fields imported successfully.`,
+All subjects, documents, and fields uploaded successfully.
+
+Your Firebase CBT backend is now ready.`,
       "success"
     );
+
+    uploadBtn.disabled = false;
 
   } catch (error) {
 
@@ -385,13 +505,15 @@ All subjects + fields imported successfully.`,
 
 ${error.message}
 
-Open browser console (F12) for details.`,
+Open browser console (F12) for more details.`,
       "error"
     );
 
+    uploadBtn.disabled = false;
+
   }
 
-}
+};
 
 </script>
 

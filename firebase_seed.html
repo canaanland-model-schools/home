@@ -1,18 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Firebase Seeder</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Firebase Full SQL Seeder</title>
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f4f6f9;
+      padding:40px;
+      color:#333;
+    }
+
+    .container{
+      max-width:900px;
+      margin:auto;
+      background:white;
+      padding:30px;
+      border-radius:10px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1{
+      color:#4a0080;
+      margin-bottom:10px;
+    }
+
+    p{
+      line-height:1.6;
+    }
+
+    button{
+      background:#4a0080;
+      color:white;
+      border:none;
+      padding:15px 25px;
+      border-radius:8px;
+      font-size:16px;
+      cursor:pointer;
+      margin-top:20px;
+    }
+
+    button:hover{
+      background:#6a00b3;
+    }
+
+    button:disabled{
+      background:gray;
+      cursor:not-allowed;
+    }
+
+    #status{
+      margin-top:20px;
+      padding:15px;
+      background:#f0f0f0;
+      border-radius:8px;
+      white-space:pre-wrap;
+      line-height:1.6;
+    }
+
+    .success{
+      background:#d4edda !important;
+      color:#155724;
+    }
+
+    .error{
+      background:#f8d7da !important;
+      color:#721c24;
+    }
+
+    .loading{
+      background:#fff3cd !important;
+      color:#856404;
+    }
+  </style>
 </head>
 <body>
 
-<h2>🔥 Firebase Database Seeder</h2>
-<button onclick="seedDatabase()">Upload All Data</button>
+<div class="container">
 
-<p id="status"></p>
+  <h1>🔥 Firebase Full SQL Seeder</h1>
+
+  <p>
+    This uploads your CBT SQL database structure into Firebase Firestore.
+  </p>
+
+  <button id="uploadBtn" onclick="seedDatabase()">
+    Upload Full Database
+  </button>
+
+  <div id="status">Waiting...</div>
+
+</div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ======================================================
+   FIREBASE IMPORTS
+====================================================== */
+
+import {
+  initializeApp,
+  getApps
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ======================================================
+   STATUS HELPER
+====================================================== */
+
+const status = document.getElementById("status");
+const uploadBtn = document.getElementById("uploadBtn");
+
+function updateStatus(message, type = "") {
+
+  status.className = type;
+  status.innerText = message;
+
+}
+
+
+/* ======================================================
+   FIREBASE CONFIG
+====================================================== */
 
 const firebaseConfig = {
   apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
@@ -23,77 +140,381 @@ const firebaseConfig = {
   appId: "1:754454130857:web:fe4923b11d5402389179b8"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+/* ======================================================
+   INITIALIZE FIREBASE
+====================================================== */
+
+let app;
+let db;
+
+try {
+
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApps()[0];
+  }
+
+  db = getFirestore(app);
+
+  console.log("Firebase initialized successfully");
+
+} catch (error) {
+
+  console.error(error);
+
+  updateStatus(
+`❌ FIREBASE INITIALIZATION FAILED
+
+${error.message}`,
+  "error"
+  );
+
+}
+
+
+/* ======================================================
+   SUBJECTS
+====================================================== */
+
+const subjects = [
+  "mathematics",
+  "english_language",
+  "basic_science",
+  "basic_technology",
+  "music",
+  "home_economics",
+  "french",
+  "agricultural_science",
+  "computer_studies",
+  "business_studies",
+  "social_studies",
+  "yoruba",
+  "phe",
+  "crs",
+  "history",
+  "diction",
+  "civic_education"
+];
+
+
+/* ======================================================
+   EXAM ENABLE
+====================================================== */
+
+const examEnable = {};
+
+subjects.forEach(subject => {
+
+  examEnable[`${subject}_objective`] = "disabled";
+  examEnable[`${subject}_theory`] = "disabled";
+
+});
+
+examEnable["computer_studies_objective"] = "enable";
+examEnable["computer_studies_theory"] = "enable";
+
+
+/* ======================================================
+   PASSWORDS
+====================================================== */
+
+const passwords = {
+  mathematics: "math123",
+  computer_studies: "com123",
+  english_language: "eng123",
+  basic_science: "bsc123",
+  basic_technology: "btec123",
+  home_economics: "eco123",
+  agricultural_science: "agr123",
+  phe: "phe123",
+  crs: "crs123",
+  music: "mus123",
+  french: "fre123",
+  diction: "dic123",
+  social_studies: "soc123",
+  yoruba: "yor123",
+  business_studies: "bus123",
+  civic_education: "civ123",
+  history: "his123"
+};
+
+
+/* ======================================================
+   RANDOMIZE SETTINGS
+====================================================== */
+
+const randomize = {};
+
+subjects.forEach(subject => {
+  randomize[subject] = "No";
+});
+
+randomize["basic_technology"] = "Yes";
+randomize["computer_studies"] = "Yes";
+randomize["agricultural_science"] = "Yes";
+randomize["phe"] = "Yes";
+randomize["yoruba"] = "Yes";
+
+
+/* ======================================================
+   EXAM TIME
+====================================================== */
+
+const examTime = {};
+
+subjects.forEach(subject => {
+  examTime[subject] = 3600;
+});
+
+examTime["computer_studies"] = 1500;
+examTime["crs"] = 30;
+
+
+/* ======================================================
+   SAMPLE RECORDS
+====================================================== */
+
+const sampleRecords = {
+
+  admin1: {
+
+    student_name: "Admin1",
+    class: "JSS1",
+    exam_type: "Objectives",
+
+    subjects: {
+      mathematics: 0,
+      computer_studies: 2,
+      crs: 3,
+      french: 4
+    },
+
+    created_at: new Date().toISOString()
+
+  },
+
+  admin2: {
+
+    student_name: "Admin2",
+    class: "JSS1",
+    exam_type: "Objectives",
+
+    subjects: {
+      mathematics: 4,
+      computer_studies: 10,
+      crs: 5
+    },
+
+    created_at: new Date().toISOString()
+
+  }
+
+};
+
+
+/* ======================================================
+   EXAM ATTEMPT
+====================================================== */
+
+const examAttempt = {
+
+  admin: true,
+  student1: true,
+  student2: true
+
+};
+
+
+/* ======================================================
+   EXAM SCORES
+====================================================== */
+
+const examScores = {
+
+  admin: 45,
+  student1: 32,
+  student2: 50
+
+};
+
+
+/* ======================================================
+   SEED DATABASE
+====================================================== */
 
 window.seedDatabase = async function () {
 
-  document.getElementById("status").innerText = "Uploading...";
-
   try {
 
-    // 1. EXAM ENABLE
-    await setDoc(doc(db, "exam_enable", "jss1"), {
-      mathematics_objective: "disabled",
-      mathematics_theory: "disabled",
-      english_objective: "disabled",
-      english_theory: "disabled",
-      computer_objective: "enable",
-      computer_theory: "enable"
-    });
+    uploadBtn.disabled = true;
 
-    // 2. PASSWORDS
-    const passwords = {
-      mathematics: "math123",
-      computer_studies: "com123",
-      english_language: "eng123",
-      basic_science: "bsc123",
-      basic_technology: "btec123"
-    };
+    updateStatus(
+      "⏳ Starting database upload...",
+      "loading"
+    );
+
+
+    /* ============================================
+       EXAM ENABLE
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_enable...",
+      "loading"
+    );
+
+    await setDoc(
+      doc(db, "exam_enable", "jss1"),
+      examEnable
+    );
+
+
+    /* ============================================
+       PASSWORDS
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_passwords...",
+      "loading"
+    );
 
     for (const subject in passwords) {
-      await setDoc(doc(db, "exam_passwords", subject), {
-        password: passwords[subject]
-      });
+
+      await setDoc(
+        doc(db, "exam_passwords", subject),
+        {
+          password: passwords[subject]
+        }
+      );
+
     }
 
-    // 3. RANDOMIZE
-    await setDoc(doc(db, "exam_randomize", "jss1"), {
-      mathematics: "No",
-      english_language: "No",
-      basic_technology: "Yes",
-      computer_studies: "Yes"
-    });
 
-    // 4. EXAM TIME
-    await setDoc(doc(db, "exam_time", "jss1"), {
-      mathematics: 3600,
-      english_language: 3600,
-      computer_studies: 150,
-      crs: 30
-    });
+    /* ============================================
+       RANDOMIZE
+    ============================================ */
 
-    // 5. SAMPLE RECORD
-    await setDoc(doc(db, "exam_records", "admin1"), {
-      student_name: "Admin1",
-      class: "JSS1",
-      exam_type: "objectives",
-      subjects: {
-        mathematics: 0,
-        computer_studies: 2,
-        crs: 3,
-        french: 4
-      },
-      created_at: new Date().toISOString()
-    });
+    updateStatus(
+      "Uploading exam_randomize...",
+      "loading"
+    );
 
-    document.getElementById("status").innerText = "✅ Upload Complete!";
+    await setDoc(
+      doc(db, "exam_randomize", "jss1"),
+      randomize
+    );
+
+
+    /* ============================================
+       EXAM TIME
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_time...",
+      "loading"
+    );
+
+    await setDoc(
+      doc(db, "exam_time", "jss1"),
+      examTime
+    );
+
+
+    /* ============================================
+       EXAM RECORDS
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_records...",
+      "loading"
+    );
+
+    for (const student in sampleRecords) {
+
+      await setDoc(
+        doc(db, "exam_records", student),
+        sampleRecords[student]
+      );
+
+    }
+
+
+    /* ============================================
+       EXAM ATTEMPT
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_attempt...",
+      "loading"
+    );
+
+    await setDoc(
+      doc(db, "exam_attempt", "jss1_mathematics"),
+      examAttempt
+    );
+
+
+    /* ============================================
+       EXAM SCORES
+    ============================================ */
+
+    updateStatus(
+      "Uploading exam_scores...",
+      "loading"
+    );
+
+    await setDoc(
+      doc(db, "exam_scores", "jss1_mathematics"),
+      examScores
+    );
+
+
+    /* ============================================
+       SUCCESS
+    ============================================ */
+
+    updateStatus(
+`✅ FULL DATABASE UPLOAD COMPLETE
+
+Collections Created Successfully:
+
+• exam_enable
+• exam_passwords
+• exam_randomize
+• exam_time
+• exam_records
+• exam_attempt
+• exam_scores
+
+All subjects, documents, and fields uploaded successfully.
+
+Your Firebase CBT backend is now ready.`,
+      "success"
+    );
+
+    uploadBtn.disabled = false;
 
   } catch (error) {
+
     console.error(error);
-    document.getElementById("status").innerText = "❌ Error uploading data";
+
+    updateStatus(
+`❌ ERROR UPLOADING DATA
+
+${error.message}
+
+Open browser console (F12) for more details.`,
+      "error"
+    );
+
+    uploadBtn.disabled = false;
+
   }
-}
+
+};
+
 </script>
 
 </body>
