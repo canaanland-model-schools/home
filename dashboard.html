@@ -18,6 +18,7 @@ body{
     background:white;
     padding:30px;
     border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 h2{
@@ -31,6 +32,7 @@ select,input{
     margin-top:15px;
     border:1px solid #ccc;
     border-radius:5px;
+    box-sizing:border-box;
 }
 
 button{
@@ -42,10 +44,19 @@ button{
     border:none;
     border-radius:5px;
     cursor:pointer;
+    font-size:16px;
 }
 
 button:hover{
     background:#6a00b3;
+}
+
+#welcome{
+    background:#f0f0f0;
+    padding:10px;
+    border-radius:5px;
+    margin-bottom:20px;
+    text-align:center;
 }
 
 </style>
@@ -53,6 +64,8 @@ button:hover{
 <body>
 
 <div class="container">
+
+<div id="welcome"></div>
 
 <h2>Student Dashboard</h2>
 
@@ -88,9 +101,77 @@ Start Exam
 
 </div>
 
-<script>
+<script type="module">
 
-window.startExam = function(){
+/* ============================================
+   FIREBASE IMPORTS
+============================================ */
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ============================================
+   FIREBASE CONFIG
+============================================ */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+  authDomain: "exam-records-system.firebaseapp.com",
+  projectId: "exam-records-system",
+  storageBucket: "exam-records-system.firebasestorage.app",
+  messagingSenderId: "754454130857",
+  appId: "1:754454130857:web:fe4923b11d5402389179b8"
+};
+
+
+/* ============================================
+   INITIALIZE FIREBASE
+============================================ */
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+/* ============================================
+   GET LOGGED IN USER
+============================================ */
+
+const student =
+JSON.parse(localStorage.getItem("loggedInStudent"));
+
+if(!student){
+
+    alert("Please sign in first");
+
+    window.location.href = "sign_in.html";
+
+}
+
+
+/* ============================================
+   DISPLAY STUDENT NAME
+============================================ */
+
+document.getElementById("welcome").innerHTML =
+`
+<b>Welcome:</b> ${student.username}
+`;
+
+
+/* ============================================
+   START EXAM
+============================================ */
+
+window.startExam = async function(){
 
 const selectedClass =
 document.getElementById("classSelect").value;
@@ -103,20 +184,93 @@ document.getElementById("subjectPassword").value.trim();
 
 if(!selectedClass || !selectedSubject){
 
-alert("Select class and subject");
-return;
+    alert("Select class and subject");
+    return;
 
 }
+
+
+/* ============================================
+   CHECK SUBJECT PASSWORD
+============================================ */
 
 if(password !== "math123"){
 
-alert("Invalid Subject Password");
-return;
+    alert("Invalid Subject Password");
+    return;
 
 }
 
+
+/* ============================================
+   CHECK EXAM ATTEMPT
+============================================ */
+
+try{
+
+    const examDocId =
+    `${selectedClass}_${selectedSubject}`;
+
+    const attemptRef =
+    doc(db, "exam_attempt", examDocId);
+
+    const attemptSnap =
+    await getDoc(attemptRef);
+
+
+    if(attemptSnap.exists()){
+
+        const data = attemptSnap.data();
+
+        const studentKey =
+        student.username.toLowerCase();
+
+        if(data[studentKey] === true){
+
+            alert(
+              "You have already attempted this exam."
+            );
+
+            window.location.href =
+            "sign_in.html";
+
+            return;
+
+        }
+
+    }
+
+
+/* ============================================
+   SAVE EXAM INFO
+============================================ */
+
+localStorage.setItem(
+    "selectedExam",
+    JSON.stringify({
+        class:selectedClass,
+        subject:selectedSubject
+    })
+);
+
+
+/* ============================================
+   REDIRECT TO EXAM PAGE
+============================================ */
+
 window.location.href =
 `${selectedClass}_${selectedSubject}_exam.html`;
+
+}
+catch(error){
+
+    console.error(error);
+
+    alert(
+      "Error checking exam attempt"
+    );
+
+}
 
 }
 
