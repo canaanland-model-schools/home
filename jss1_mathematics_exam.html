@@ -12,28 +12,29 @@ body{
     font-family:Arial;
     background:#f4f4f4;
     margin:0;
-    padding:0;
 }
 
 #header{
     background:#4a0080;
     color:white;
     padding:20px;
+    text-align:center;
 }
 
-#logo img{
+#header img{
     width:100px;
+    border-radius:50%;
 }
 
 .container{
-    max-width:900px;
+    max-width:800px;
     margin:20px auto;
     background:white;
     padding:20px;
     border-radius:10px;
 }
 
-.option-group{
+.option{
     margin:15px 0;
 }
 
@@ -44,82 +45,30 @@ button{
     color:white;
     border-radius:5px;
     cursor:pointer;
+    margin:5px;
 }
 
 button:hover{
     background:#6a00b3;
 }
 
-.nav-buttons{
-    text-align:center;
-    margin-top:20px;
-}
-
-.questionButtons button{
-    margin:5px;
-}
-
 #timer{
     font-size:25px;
     color:yellow;
-    text-align:center;
-    margin-top:10px;
-}
-
-.marquee-container{
-    overflow:hidden;
-    white-space:nowrap;
-}
-
-.marquee-text{
-    display:inline-block;
-    animation:marquee 15s linear infinite;
-}
-
-@keyframes marquee{
-    from{transform:translateX(100%);}
-    to{transform:translateX(-100%);}
 }
 
 </style>
 </head>
 
-<body oncontextmenu="return false">
+<body>
 
 <div id="header">
 
-<div id="logout-container">
-<button onclick="logout()">Logout</button>
+<img id="userImage" src="img/default_user.jpg">
 
-<div class="marquee-container">
-<span class="marquee-text">
-3RD TERM PROMOTION EXAMINATION : CANAANLAND GROUP OF SCHOOLS
-</span>
-</div>
+<h2 id="studentName"></h2>
 
-</div>
-
-<div id="logo">
-<img src="img/Ctemplogo.png">
-</div>
-
-<center>
-
-<img id="userImage"
-src="img/default_user.jpg"
-style="width:120px;height:120px;border-radius:50%;">
-
-<h2 id="usernameDisplay"></h2>
-
-<h3>
-CANAANLAND GROUP OF SCHOOLS
-</h3>
-
-<h3>
-THIRD TERM EXAMINATION
-</h3>
-
-</center>
+<h3>JSS1 Mathematics CBT</h3>
 
 <div id="timer"></div>
 
@@ -127,49 +76,23 @@ THIRD TERM EXAMINATION
 
 <div class="container">
 
-<h2>JSS1 Mathematics CBT</h2>
+<div id="questionBox"></div>
 
-<div id="questionText"></div>
+<center>
 
-<div class="option-group">
-<label>
-<input type="radio" name="option" value="A">
-<span id="optA"></span>
-</label>
-</div>
+<button onclick="previousQuestion()">
+Previous
+</button>
 
-<div class="option-group">
-<label>
-<input type="radio" name="option" value="B">
-<span id="optB"></span>
-</label>
-</div>
+<button onclick="nextQuestion()">
+Next
+</button>
 
-<div class="option-group">
-<label>
-<input type="radio" name="option" value="C">
-<span id="optC"></span>
-</label>
-</div>
+<button onclick="submitExam()">
+Submit
+</button>
 
-<div class="option-group">
-<label>
-<input type="radio" name="option" value="D">
-<span id="optD"></span>
-</label>
-</div>
-
-<div class="nav-buttons">
-
-<button onclick="prevQuestion()">Previous</button>
-
-<button onclick="nextQuestion()">Next</button>
-
-<button onclick="submitExam()">Submit</button>
-
-</div>
-
-<div id="questionButtons" class="questionButtons"></div>
+</center>
 
 </div>
 
@@ -185,11 +108,6 @@ updateDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-
-/* ===========================================
-   FIREBASE
-=========================================== */
-
 const firebaseConfig = {
 
 apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
@@ -204,74 +122,48 @@ appId: "1:754454130857:web:fe4923b11d5402389179b8"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
-/* ===========================================
-   STUDENT INFO
-=========================================== */
-
 const username =
 localStorage.getItem("student_username") || "Student";
 
 const image =
-localStorage.getItem("student_image") ||
-"img/default_user.jpg";
+localStorage.getItem("student_image");
 
-document.getElementById("usernameDisplay").innerText =
+document.getElementById("studentName").innerText =
 username;
 
 document.getElementById("userImage").src =
 image;
 
-
-/* ===========================================
-   QUESTIONS
-=========================================== */
-
 const questions = [
 
 {
 question:"2 + 2 = ?",
-A:"2",
-B:"3",
-C:"4",
-D:"5",
-answer:"C"
+options:["2","3","4","5"],
+answer:"4"
 },
 
 {
 question:"5 x 2 = ?",
-A:"10",
-B:"12",
-C:"8",
-D:"15",
-answer:"A"
+options:["10","12","8","15"],
+answer:"10"
 },
 
 {
 question:"12 - 7 = ?",
-A:"4",
-B:"5",
-C:"6",
-D:"7",
-answer:"B"
+options:["4","5","6","7"],
+answer:"5"
 },
 
 {
 question:"9 + 1 = ?",
-A:"11",
-B:"10",
-C:"9",
-D:"8",
-answer:"B"
+options:["11","10","9","8"],
+answer:"10"
 },
 
 {
 question:"6 / 2 = ?",
-A:"1",
-B:"2",
-C:"3",
-D:"4",
-answer:"C"
+options:["1","2","3","4"],
+answer:"3"
 }
 
 ];
@@ -279,51 +171,62 @@ answer:"C"
 let currentQuestion = 0;
 let answers = {};
 
-
-/* ===========================================
-   LOAD QUESTION
-=========================================== */
-
 function loadQuestion(){
 
 const q = questions[currentQuestion];
 
-document.getElementById("questionText").innerHTML =
-`
+let html = `
+
 <h3>
 Question ${currentQuestion + 1}
+of ${questions.length}
 </h3>
 
 <p>${q.question}</p>
+
 `;
 
-document.getElementById("optA").innerText = q.A;
-document.getElementById("optB").innerText = q.B;
-document.getElementById("optC").innerText = q.C;
-document.getElementById("optD").innerText = q.D;
+q.options.forEach(option=>{
+
+html += `
+
+<div class="option">
+
+<label>
+
+<input
+type="radio"
+name="option"
+value="${option}"
+${answers[currentQuestion] === option ? 'checked' : ''}>
+
+${option}
+
+</label>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("questionBox").innerHTML =
+html;
 
 const radios =
 document.querySelectorAll('input[name="option"]');
 
 radios.forEach(radio=>{
 
-radio.checked =
-answers[currentQuestion] === radio.value;
-
-radio.onchange = function(){
+radio.addEventListener("change",function(){
 
 answers[currentQuestion] = this.value;
 
-};
+});
 
 });
 
 }
-
-
-/* ===========================================
-   NEXT
-=========================================== */
 
 window.nextQuestion = function(){
 
@@ -336,12 +239,7 @@ loadQuestion();
 
 }
 
-
-/* ===========================================
-   PREVIOUS
-=========================================== */
-
-window.prevQuestion = function(){
+window.previousQuestion = function(){
 
 if(currentQuestion > 0){
 
@@ -351,11 +249,6 @@ loadQuestion();
 }
 
 }
-
-
-/* ===========================================
-   SUBMIT
-=========================================== */
 
 window.submitExam = async function(){
 
@@ -371,38 +264,29 @@ score += 10;
 
 });
 
-
-/* ===========================================
-   SAVE ATTEMPT
-=========================================== */
+/* SAVE ATTEMPT */
 
 const attemptRef =
-doc(db, "exam_attempt", "jss1_mathematics");
+doc(db,"exam_attempt","jss1_mathematics");
 
-await updateDoc(attemptRef, {
+await updateDoc(attemptRef,{
 
 [username.toLowerCase()]: true
 
 });
 
-
-/* ===========================================
-   SAVE SCORE
-=========================================== */
+/* SAVE SCORE */
 
 const scoreRef =
-doc(db, "exam_scores", "jss1_mathematics");
+doc(db,"exam_scores","jss1_mathematics");
 
-await updateDoc(scoreRef, {
+await updateDoc(scoreRef,{
 
 [username.toLowerCase()]: score
 
 });
 
-
-/* ===========================================
-   SAVE LOCAL RESULT
-=========================================== */
+/* LOCAL RESULT */
 
 localStorage.setItem("cbt_result",
 
@@ -420,10 +304,7 @@ window.location.href = "result.html";
 
 }
 
-
-/* ===========================================
-   TIMER
-=========================================== */
+/* TIMER */
 
 let timeLeft = 300;
 
@@ -460,19 +341,6 @@ submitExam();
 startTimer();
 
 loadQuestion();
-
-
-/* ===========================================
-   LOGOUT
-=========================================== */
-
-window.logout = function(){
-
-localStorage.clear();
-
-window.location.href = "sign_in.html";
-
-}
 
 </script>
 
