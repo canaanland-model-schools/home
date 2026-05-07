@@ -109,15 +109,19 @@ const students = [
 {
 username:"admin",
 email:"admin@gmail.com",
-password:"1234",
-image:"img/default_user.jpg"
+password:"12345"
 },
 
 {
-username:"student1",
-email:"student1@gmail.com",
-password:"1111",
-image:"img/default_user.jpg"
+username:"john",
+email:"john@gmail.com",
+password:"12345"
+},
+
+{
+username:"mary",
+email:"mary@gmail.com",
+password:"12345"
 }
 
 ];
@@ -133,32 +137,45 @@ document.getElementById("email").value.trim();
 const password =
 document.getElementById("password").value.trim();
 
-const user = students.find(student =>
 
-student.username === username &&
-student.email === email &&
-student.password === password
+const student = students.find(s =>
+
+s.username === username &&
+s.email === email &&
+s.password === password
 
 );
 
-if(user){
 
-localStorage.setItem("student_username", user.username);
-localStorage.setItem("student_image", user.image);
+if(student){
 
-document.getElementById("status").innerHTML =
-"<span class='success'>Login Successful</span>";
+/* ============================================
+   SAVE LOGIN SESSION
+============================================ */
 
-setTimeout(()=>{
+localStorage.setItem(
+"loggedInStudent",
+JSON.stringify(student)
+);
+
+
+/* ============================================
+   SUCCESS MESSAGE
+============================================ */
+
+alert("Login Successful");
+
+
+/* ============================================
+   REDIRECT
+============================================ */
 
 window.location.href = "dashboard.html";
 
-},1000);
+}
+else{
 
-}else{
-
-document.getElementById("status").innerHTML =
-"<span class='error'>Invalid Login Details</span>";
+alert("Invalid Login Details");
 
 }
 
