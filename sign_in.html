@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Sign In</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    font-family:Arial;
+    background:#f4f4f4;
+}
+
+.container{
+    max-width:450px;
+    margin:50px auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.logo{
+    text-align:center;
+}
+
+.logo img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+}
+
+h2{
+    text-align:center;
+    color:#4a0080;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    background:#4a0080;
+    color:white;
+    border:none;
+    border-radius:5px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#6a00b3;
+}
+
+#status{
+    margin-top:15px;
+    text-align:center;
+}
+
+.success{
+    color:green;
+}
+
+.error{
+    color:red;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="logo">
+<img src="img/Ctemplogo.png">
+</div>
+
+<h2>CANAANLAND CBT PORTAL</h2>
+
+<input type="text" id="username" placeholder="Username">
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">
+Sign In
+</button>
+
+<p id="status"></p>
+
+</div>
+
+<script>
+
+const students = [
+
+{
+username:"admin",
+email:"admin@gmail.com",
+password:"1234",
+image:"img/default_user.jpg"
+},
+
+{
+username:"student1",
+email:"student1@gmail.com",
+password:"1111",
+image:"img/default_user.jpg"
+}
+
+];
+
+window.login = function(){
+
+const username =
+document.getElementById("username").value.trim();
+
+const email =
+document.getElementById("email").value.trim();
+
+const password =
+document.getElementById("password").value.trim();
+
+const user = students.find(student =>
+
+student.username === username &&
+student.email === email &&
+student.password === password
+
+);
+
+if(user){
+
+localStorage.setItem("student_username", user.username);
+localStorage.setItem("student_image", user.image);
+
+document.getElementById("status").innerHTML =
+"<span class='success'>Login Successful</span>";
+
+setTimeout(()=>{
+
+window.location.href = "dashboard.html";
+
+},1000);
+
+}else{
+
+document.getElementById("status").innerHTML =
+"<span class='error'>Invalid Login Details</span>";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

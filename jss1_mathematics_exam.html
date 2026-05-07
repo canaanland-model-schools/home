@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JSS1 Mathematics CBT</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+    margin:0;
+    padding:0;
+}
+
+#header{
+    background:#4a0080;
+    color:white;
+    padding:20px;
+}
+
+#logo img{
+    width:100px;
+}
+
+.container{
+    max-width:900px;
+    margin:20px auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+
+.option-group{
+    margin:15px 0;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    background:#4a0080;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#6a00b3;
+}
+
+.nav-buttons{
+    text-align:center;
+    margin-top:20px;
+}
+
+.questionButtons button{
+    margin:5px;
+}
+
+#timer{
+    font-size:25px;
+    color:yellow;
+    text-align:center;
+    margin-top:10px;
+}
+
+.marquee-container{
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+.marquee-text{
+    display:inline-block;
+    animation:marquee 15s linear infinite;
+}
+
+@keyframes marquee{
+    from{transform:translateX(100%);}
+    to{transform:translateX(-100%);}
+}
+
+</style>
+</head>
+
+<body oncontextmenu="return false">
+
+<div id="header">
+
+<div id="logout-container">
+<button onclick="logout()">Logout</button>
+
+<div class="marquee-container">
+<span class="marquee-text">
+3RD TERM PROMOTION EXAMINATION : CANAANLAND GROUP OF SCHOOLS
+</span>
+</div>
+
+</div>
+
+<div id="logo">
+<img src="img/Ctemplogo.png">
+</div>
+
+<center>
+
+<img id="userImage"
+src="img/default_user.jpg"
+style="width:120px;height:120px;border-radius:50%;">
+
+<h2 id="usernameDisplay"></h2>
+
+<h3>
+CANAANLAND GROUP OF SCHOOLS
+</h3>
+
+<h3>
+THIRD TERM EXAMINATION
+</h3>
+
+</center>
+
+<div id="timer"></div>
+
+</div>
+
+<div class="container">
+
+<h2>JSS1 Mathematics CBT</h2>
+
+<div id="questionText"></div>
+
+<div class="option-group">
+<label>
+<input type="radio" name="option" value="A">
+<span id="optA"></span>
+</label>
+</div>
+
+<div class="option-group">
+<label>
+<input type="radio" name="option" value="B">
+<span id="optB"></span>
+</label>
+</div>
+
+<div class="option-group">
+<label>
+<input type="radio" name="option" value="C">
+<span id="optC"></span>
+</label>
+</div>
+
+<div class="option-group">
+<label>
+<input type="radio" name="option" value="D">
+<span id="optD"></span>
+</label>
+</div>
+
+<div class="nav-buttons">
+
+<button onclick="prevQuestion()">Previous</button>
+
+<button onclick="nextQuestion()">Next</button>
+
+<button onclick="submitExam()">Submit</button>
+
+</div>
+
+<div id="questionButtons" class="questionButtons"></div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+getFirestore,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+
+/* ===========================================
+   FIREBASE
+=========================================== */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+authDomain: "exam-records-system.firebaseapp.com",
+projectId: "exam-records-system",
+storageBucket: "exam-records-system.firebasestorage.app",
+messagingSenderId: "754454130857",
+appId: "1:754454130857:web:fe4923b11d5402389179b8"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+/* ===========================================
+   STUDENT INFO
+=========================================== */
+
+const username =
+localStorage.getItem("student_username") || "Student";
+
+const image =
+localStorage.getItem("student_image") ||
+"img/default_user.jpg";
+
+document.getElementById("usernameDisplay").innerText =
+username;
+
+document.getElementById("userImage").src =
+image;
+
+
+/* ===========================================
+   QUESTIONS
+=========================================== */
+
+const questions = [
+
+{
+question:"2 + 2 = ?",
+A:"2",
+B:"3",
+C:"4",
+D:"5",
+answer:"C"
+},
+
+{
+question:"5 x 2 = ?",
+A:"10",
+B:"12",
+C:"8",
+D:"15",
+answer:"A"
+},
+
+{
+question:"12 - 7 = ?",
+A:"4",
+B:"5",
+C:"6",
+D:"7",
+answer:"B"
+},
+
+{
+question:"9 + 1 = ?",
+A:"11",
+B:"10",
+C:"9",
+D:"8",
+answer:"B"
+},
+
+{
+question:"6 / 2 = ?",
+A:"1",
+B:"2",
+C:"3",
+D:"4",
+answer:"C"
+}
+
+];
+
+let currentQuestion = 0;
+let answers = {};
+
+
+/* ===========================================
+   LOAD QUESTION
+=========================================== */
+
+function loadQuestion(){
+
+const q = questions[currentQuestion];
+
+document.getElementById("questionText").innerHTML =
+`
+<h3>
+Question ${currentQuestion + 1}
+</h3>
+
+<p>${q.question}</p>
+`;
+
+document.getElementById("optA").innerText = q.A;
+document.getElementById("optB").innerText = q.B;
+document.getElementById("optC").innerText = q.C;
+document.getElementById("optD").innerText = q.D;
+
+const radios =
+document.querySelectorAll('input[name="option"]');
+
+radios.forEach(radio=>{
+
+radio.checked =
+answers[currentQuestion] === radio.value;
+
+radio.onchange = function(){
+
+answers[currentQuestion] = this.value;
+
+};
+
+});
+
+}
+
+
+/* ===========================================
+   NEXT
+=========================================== */
+
+window.nextQuestion = function(){
+
+if(currentQuestion < questions.length - 1){
+
+currentQuestion++;
+loadQuestion();
+
+}
+
+}
+
+
+/* ===========================================
+   PREVIOUS
+=========================================== */
+
+window.prevQuestion = function(){
+
+if(currentQuestion > 0){
+
+currentQuestion--;
+loadQuestion();
+
+}
+
+}
+
+
+/* ===========================================
+   SUBMIT
+=========================================== */
+
+window.submitExam = async function(){
+
+let score = 0;
+
+questions.forEach((q,index)=>{
+
+if(answers[index] === q.answer){
+
+score += 10;
+
+}
+
+});
+
+
+/* ===========================================
+   SAVE ATTEMPT
+=========================================== */
+
+const attemptRef =
+doc(db, "exam_attempt", "jss1_mathematics");
+
+await updateDoc(attemptRef, {
+
+[username.toLowerCase()]: true
+
+});
+
+
+/* ===========================================
+   SAVE SCORE
+=========================================== */
+
+const scoreRef =
+doc(db, "exam_scores", "jss1_mathematics");
+
+await updateDoc(scoreRef, {
+
+[username.toLowerCase()]: score
+
+});
+
+
+/* ===========================================
+   SAVE LOCAL RESULT
+=========================================== */
+
+localStorage.setItem("cbt_result",
+
+JSON.stringify({
+
+studentName: username,
+score: score,
+total: 50
+
+})
+
+);
+
+window.location.href = "result.html";
+
+}
+
+
+/* ===========================================
+   TIMER
+=========================================== */
+
+let timeLeft = 300;
+
+function startTimer(){
+
+const timer =
+document.getElementById("timer");
+
+const interval = setInterval(()=>{
+
+let minutes =
+Math.floor(timeLeft / 60);
+
+let seconds =
+timeLeft % 60;
+
+timer.innerText =
+`${minutes}:${seconds}`;
+
+timeLeft--;
+
+if(timeLeft < 0){
+
+clearInterval(interval);
+
+submitExam();
+
+}
+
+},1000);
+
+}
+
+startTimer();
+
+loadQuestion();
+
+
+/* ===========================================
+   LOGOUT
+=========================================== */
+
+window.logout = function(){
+
+localStorage.clear();
+
+window.location.href = "sign_in.html";
+
+}
+
+</script>
+
+</body>
+</html>

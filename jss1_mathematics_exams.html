@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JSS1 Mathematics CBT</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+    margin:0;
+}
+
+#header{
+    background:#4a0080;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+#header img{
+    width:100px;
+    border-radius:50%;
+}
+
+.container{
+    max-width:800px;
+    margin:20px auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+
+.option{
+    margin:15px 0;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    background:#4a0080;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+    margin:5px;
+}
+
+button:hover{
+    background:#6a00b3;
+}
+
+#timer{
+    font-size:25px;
+    color:yellow;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="header">
+
+<img id="userImage" src="img/default_user.jpg">
+
+<h2 id="studentName"></h2>
+
+<h3>JSS1 Mathematics CBT</h3>
+
+<div id="timer"></div>
+
+</div>
+
+<div class="container">
+
+<div id="questionBox"></div>
+
+<center>
+
+<button onclick="previousQuestion()">
+Previous
+</button>
+
+<button onclick="nextQuestion()">
+Next
+</button>
+
+<button onclick="submitExam()">
+Submit
+</button>
+
+</center>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+getFirestore,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+authDomain: "exam-records-system.firebaseapp.com",
+projectId: "exam-records-system",
+storageBucket: "exam-records-system.firebasestorage.app",
+messagingSenderId: "754454130857",
+appId: "1:754454130857:web:fe4923b11d5402389179b8"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const username =
+localStorage.getItem("student_username") || "Student";
+
+const image =
+localStorage.getItem("student_image");
+
+document.getElementById("studentName").innerText =
+username;
+
+document.getElementById("userImage").src =
+image;
+
+const questions = [
+
+{
+question:"2 + 2 = ?",
+options:["2","3","4","5"],
+answer:"4"
+},
+
+{
+question:"5 x 2 = ?",
+options:["10","12","8","15"],
+answer:"10"
+},
+
+{
+question:"12 - 7 = ?",
+options:["4","5","6","7"],
+answer:"5"
+},
+
+{
+question:"9 + 1 = ?",
+options:["11","10","9","8"],
+answer:"10"
+},
+
+{
+question:"6 / 2 = ?",
+options:["1","2","3","4"],
+answer:"3"
+}
+
+];
+
+let currentQuestion = 0;
+let answers = {};
+
+function loadQuestion(){
+
+const q = questions[currentQuestion];
+
+let html = `
+
+<h3>
+Question ${currentQuestion + 1}
+of ${questions.length}
+</h3>
+
+<p>${q.question}</p>
+
+`;
+
+q.options.forEach(option=>{
+
+html += `
+
+<div class="option">
+
+<label>
+
+<input
+type="radio"
+name="option"
+value="${option}"
+${answers[currentQuestion] === option ? 'checked' : ''}>
+
+${option}
+
+</label>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("questionBox").innerHTML =
+html;
+
+const radios =
+document.querySelectorAll('input[name="option"]');
+
+radios.forEach(radio=>{
+
+radio.addEventListener("change",function(){
+
+answers[currentQuestion] = this.value;
+
+});
+
+});
+
+}
+
+window.nextQuestion = function(){
+
+if(currentQuestion < questions.length - 1){
+
+currentQuestion++;
+loadQuestion();
+
+}
+
+}
+
+window.previousQuestion = function(){
+
+if(currentQuestion > 0){
+
+currentQuestion--;
+loadQuestion();
+
+}
+
+}
+
+window.submitExam = async function(){
+
+let score = 0;
+
+questions.forEach((q,index)=>{
+
+if(answers[index] === q.answer){
+
+score += 10;
+
+}
+
+});
+
+/* SAVE ATTEMPT */
+
+const attemptRef =
+doc(db,"exam_attempt","jss1_mathematics");
+
+await updateDoc(attemptRef,{
+
+[username.toLowerCase()]: true
+
+});
+
+/* SAVE SCORE */
+
+const scoreRef =
+doc(db,"exam_scores","jss1_mathematics");
+
+await updateDoc(scoreRef,{
+
+[username.toLowerCase()]: score
+
+});
+
+/* LOCAL RESULT */
+
+localStorage.setItem("cbt_result",
+
+JSON.stringify({
+
+studentName: username,
+score: score,
+total: 50
+
+})
+
+);
+
+window.location.href = "result.html";
+
+}
+
+/* TIMER */
+
+let timeLeft = 300;
+
+function startTimer(){
+
+const timer =
+document.getElementById("timer");
+
+const interval = setInterval(()=>{
+
+let minutes =
+Math.floor(timeLeft / 60);
+
+let seconds =
+timeLeft % 60;
+
+timer.innerText =
+`${minutes}:${seconds}`;
+
+timeLeft--;
+
+if(timeLeft < 0){
+
+clearInterval(interval);
+
+submitExam();
+
+}
+
+},1000);
+
+}
+
+startTimer();
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
