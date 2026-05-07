@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
 <title>Result</title>
 
@@ -22,8 +26,11 @@ body{
     text-align:center;
 }
 
-h1{
-    color:#4a0080;
+img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
 }
 
 button{
@@ -35,15 +42,13 @@ button{
     cursor:pointer;
 }
 
-button:hover{
-    background:#6a00b3;
-}
-
 </style>
 </head>
 <body>
 
 <div class="container">
+
+<img id="studentImage">
 
 <h1>Exam Result</h1>
 
@@ -60,17 +65,33 @@ OK
 <script>
 
 const result =
-JSON.parse(localStorage.getItem("cbt_result"));
+JSON.parse(
+localStorage.getItem("cbt_result")
+);
 
-document.getElementById("student").innerText =
+const student =
+JSON.parse(
+localStorage.getItem("loggedInStudent")
+);
+
+document.getElementById("student")
+.innerText =
 result.studentName;
 
-document.getElementById("score").innerText =
+document.getElementById("score")
+.innerText =
 `Score: ${result.score}/${result.total}`;
+
+document.getElementById("studentImage")
+.src =
+student.image;
 
 function goHome(){
 
-window.location.href = "sign_in.html";
+localStorage.removeItem("cbt_result");
+
+window.location.href =
+"sign_in.html";
 
 }
 

@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
+
 <title>Dashboard</title>
 
 <style>
@@ -18,12 +22,18 @@ body{
     background:white;
     padding:30px;
     border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
-h2{
+#welcome{
     text-align:center;
-    color:#4a0080;
+    margin-bottom:20px;
+}
+
+#welcome img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
 }
 
 select,input{
@@ -44,19 +54,6 @@ button{
     border:none;
     border-radius:5px;
     cursor:pointer;
-    font-size:16px;
-}
-
-button:hover{
-    background:#6a00b3;
-}
-
-#welcome{
-    background:#f0f0f0;
-    padding:10px;
-    border-radius:5px;
-    margin-bottom:20px;
-    text-align:center;
 }
 
 </style>
@@ -67,24 +64,39 @@ button:hover{
 
 <div id="welcome"></div>
 
-<h2>Student Dashboard</h2>
+<h2 align="center">
+Student Dashboard
+</h2>
 
 <select id="classSelect">
 
-<option value="">Select Class</option>
+<option value="">
+Select Class
+</option>
 
 <option value="jss1">
 JSS1
+</option>
+<option value="jss2">
+JSS2
+</option>
+<option value="jss3">
+JSS3
 </option>
 
 </select>
 
 <select id="subjectSelect">
 
-<option value="">Select Subject</option>
+<option value="">
+Select Subject
+</option>
 
 <option value="mathematics">
 Mathematics
+</option>
+<option value="english_language">
+English Language
 </option>
 
 </select>
@@ -103,73 +115,54 @@ Start Exam
 
 <script type="module">
 
-/* ============================================
-   FIREBASE IMPORTS
-============================================ */
-
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
 import {
-    getFirestore,
-    doc,
-    getDoc
+getFirestore,
+doc,
+getDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-
-/* ============================================
-   FIREBASE CONFIG
-============================================ */
-
 const firebaseConfig = {
-  apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
-  authDomain: "exam-records-system.firebaseapp.com",
-  projectId: "exam-records-system",
-  storageBucket: "exam-records-system.firebasestorage.app",
-  messagingSenderId: "754454130857",
-  appId: "1:754454130857:web:fe4923b11d5402389179b8"
+
+apiKey:"AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+authDomain:"exam-records-system.firebaseapp.com",
+projectId:"exam-records-system",
+storageBucket:"exam-records-system.firebasestorage.app",
+messagingSenderId:"754454130857",
+appId:"1:754454130857:web:fe4923b11d5402389179b8"
+
 };
-
-
-/* ============================================
-   INITIALIZE FIREBASE
-============================================ */
 
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-
-/* ============================================
-   GET LOGGED IN USER
-============================================ */
-
 const student =
-JSON.parse(localStorage.getItem("loggedInStudent"));
+JSON.parse(
+localStorage.getItem("loggedInStudent")
+);
 
 if(!student){
 
-    alert("Please sign in first");
+alert("Please Sign In First");
 
-    window.location.href = "sign_in.html";
+window.location.href =
+"sign_in.html";
 
 }
 
+document.getElementById("welcome")
+.innerHTML =
 
-/* ============================================
-   DISPLAY STUDENT NAME
-============================================ */
-
-document.getElementById("welcome").innerHTML =
 `
-<b>Welcome:</b> ${student.username}
+<img src="${student.image}">
+<h3>
+Welcome ${student.username}
+</h3>
 `;
-
-
-/* ============================================
-   START EXAM
-============================================ */
 
 window.startExam = async function(){
 
@@ -180,97 +173,50 @@ const selectedSubject =
 document.getElementById("subjectSelect").value;
 
 const password =
-document.getElementById("subjectPassword").value.trim();
-
-if(!selectedClass || !selectedSubject){
-
-    alert("Select class and subject");
-    return;
-
-}
-
-
-/* ============================================
-   CHECK SUBJECT PASSWORD
-============================================ */
+document.getElementById("subjectPassword")
+.value.trim();
 
 if(password !== "math123"){
 
-    alert("Invalid Subject Password");
-    return;
+alert("Invalid Subject Password");
+return;
 
 }
 
+const examId =
+`${selectedClass}_${selectedSubject}`;
 
-/* ============================================
-   CHECK EXAM ATTEMPT
-============================================ */
+const attemptRef =
+doc(db,"exam_attempt",examId);
 
-try{
+const attemptSnap =
+await getDoc(attemptRef);
 
-    const examDocId =
-    `${selectedClass}_${selectedSubject}`;
+if(attemptSnap.exists()){
 
-    const attemptRef =
-    doc(db, "exam_attempt", examDocId);
+const data =
+attemptSnap.data();
 
-    const attemptSnap =
-    await getDoc(attemptRef);
+if(
+data[student.username.toLowerCase()]
+=== true
+){
 
-
-    if(attemptSnap.exists()){
-
-        const data = attemptSnap.data();
-
-        const studentKey =
-        student.username.toLowerCase();
-
-        if(data[studentKey] === true){
-
-            alert(
-              "You have already attempted this exam."
-            );
-
-            window.location.href =
-            "sign_in.html";
-
-            return;
-
-        }
-
-    }
-
-
-/* ============================================
-   SAVE EXAM INFO
-============================================ */
-
-localStorage.setItem(
-    "selectedExam",
-    JSON.stringify({
-        class:selectedClass,
-        subject:selectedSubject
-    })
+alert(
+"You have already attempted this exam"
 );
 
+window.location.href =
+"sign_in.html";
 
-/* ============================================
-   REDIRECT TO EXAM PAGE
-============================================ */
+return;
+
+}
+
+}
 
 window.location.href =
-`${selectedClass}_${selectedSubject}_exam.html`;
-
-}
-catch(error){
-
-    console.error(error);
-
-    alert(
-      "Error checking exam attempt"
-    );
-
-}
+`${examId}_exam.html`;
 
 }
 

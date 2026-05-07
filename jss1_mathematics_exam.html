@@ -580,12 +580,26 @@ const db = getFirestore(app);
    USER DATA
 ========================== */
 
+const student =
+JSON.parse(
+localStorage.getItem("loggedInStudent")
+);
+
+if(!student){
+
+alert("Please Sign In First");
+
+window.location.href =
+"sign_in.html";
+
+}
+
 const username =
-localStorage.getItem("student_username") || "Student";
+student.username;
 
 const image =
-localStorage.getItem("student_image") ||
-"img/default_user.jpg";
+student.image || "img/default_user.jpg";
+
 
 document.getElementById("studentName").innerText =
 username;

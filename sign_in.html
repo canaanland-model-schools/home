@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
+
 <title>Student Sign In</title>
 
 <style>
@@ -45,6 +49,7 @@ input{
     border:1px solid #ccc;
     border-radius:5px;
     font-size:16px;
+    box-sizing:border-box;
 }
 
 button{
@@ -61,19 +66,6 @@ button{
 
 button:hover{
     background:#6a00b3;
-}
-
-#status{
-    margin-top:15px;
-    text-align:center;
-}
-
-.success{
-    color:green;
-}
-
-.error{
-    color:red;
 }
 
 </style>
@@ -98,45 +90,74 @@ button:hover{
 Sign In
 </button>
 
-<p id="status"></p>
-
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+authDomain:"exam-records-system.firebaseapp.com",
+projectId:"exam-records-system",
+storageBucket:"exam-records-system.firebasestorage.app",
+messagingSenderId:"754454130857",
+appId:"1:754454130857:web:fe4923b11d5402389179b8"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
 
 const students = [
 
 {
 username:"admin",
 email:"admin@gmail.com",
-password:"12345"
+password:"12345",
+image:"img/admin.png"
 },
 
 {
 username:"john",
 email:"john@gmail.com",
-password:"12345"
+password:"12345",
+image:"img/john.png"
 },
 
 {
 username:"mary",
 email:"mary@gmail.com",
-password:"12345"
+password:"12345",
+image:"img/mary.png"
 }
 
 ];
 
-window.login = function(){
+window.login = async function(){
 
 const username =
-document.getElementById("username").value.trim();
+document.getElementById("username")
+.value.trim().toLowerCase();
 
 const email =
-document.getElementById("email").value.trim();
+document.getElementById("email")
+.value.trim().toLowerCase();
 
 const password =
-document.getElementById("password").value.trim();
-
+document.getElementById("password")
+.value.trim();
 
 const student = students.find(s =>
 
@@ -146,38 +167,54 @@ s.password === password
 
 );
 
+if(!student){
 
-if(student){
+alert("Invalid Login Details");
+return;
 
-/* ============================================
-   SAVE LOGIN SESSION
-============================================ */
+}
+
+/* SAVE SESSION */
 
 localStorage.setItem(
 "loggedInStudent",
 JSON.stringify(student)
 );
 
+/* AUTO CREATE FIRESTORE RECORD */
 
-/* ============================================
-   SUCCESS MESSAGE
-============================================ */
+try{
+
+const recordRef =
+doc(db,"exam_records",username);
+
+const snap =
+await getDoc(recordRef);
+
+if(!snap.exists()){
+
+await setDoc(recordRef,{
+
+student_name: username,
+email: email,
+class: "JSS1",
+created_at: new Date().toISOString()
+
+});
+
+}
+
+}
+catch(error){
+
+console.log(error);
+
+}
 
 alert("Login Successful");
 
-
-/* ============================================
-   REDIRECT
-============================================ */
-
-window.location.href = "dashboard.html";
-
-}
-else{
-
-alert("Invalid Login Details");
-
-}
+window.location.href =
+"dashboard.html";
 
 }
 
