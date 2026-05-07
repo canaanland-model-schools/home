@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Seeder</title>
+</head>
+<body>
+
+<h2>🔥 Firebase Database Seeder</h2>
+<button onclick="seedDatabase()">Upload All Data</button>
+
+<p id="status"></p>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAheDyeEzANwioxqAggNU5b9F4mPRTsOKU",
+  authDomain: "exam-records-system.firebaseapp.com",
+  projectId: "exam-records-system",
+  storageBucket: "exam-records-system.firebasestorage.app",
+  messagingSenderId: "754454130857",
+  appId: "1:754454130857:web:fe4923b11d5402389179b8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.seedDatabase = async function () {
+
+  document.getElementById("status").innerText = "Uploading...";
+
+  try {
+
+    // 1. EXAM ENABLE
+    await setDoc(doc(db, "exam_enable", "jss1"), {
+      mathematics_objective: "disabled",
+      mathematics_theory: "disabled",
+      english_objective: "disabled",
+      english_theory: "disabled",
+      computer_objective: "enable",
+      computer_theory: "enable"
+    });
+
+    // 2. PASSWORDS
+    const passwords = {
+      mathematics: "math123",
+      computer_studies: "com123",
+      english_language: "eng123",
+      basic_science: "bsc123",
+      basic_technology: "btec123"
+    };
+
+    for (const subject in passwords) {
+      await setDoc(doc(db, "exam_passwords", subject), {
+        password: passwords[subject]
+      });
+    }
+
+    // 3. RANDOMIZE
+    await setDoc(doc(db, "exam_randomize", "jss1"), {
+      mathematics: "No",
+      english_language: "No",
+      basic_technology: "Yes",
+      computer_studies: "Yes"
+    });
+
+    // 4. EXAM TIME
+    await setDoc(doc(db, "exam_time", "jss1"), {
+      mathematics: 3600,
+      english_language: 3600,
+      computer_studies: 150,
+      crs: 30
+    });
+
+    // 5. SAMPLE RECORD
+    await setDoc(doc(db, "exam_records", "admin1"), {
+      student_name: "Admin1",
+      class: "JSS1",
+      exam_type: "objectives",
+      subjects: {
+        mathematics: 0,
+        computer_studies: 2,
+        crs: 3,
+        french: 4
+      },
+      created_at: new Date().toISOString()
+    });
+
+    document.getElementById("status").innerText = "✅ Upload Complete!";
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById("status").innerText = "❌ Error uploading data";
+  }
+}
+</script>
+
+</body>
+</html>
