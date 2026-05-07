@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Result</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+}
+
+.container{
+    max-width:500px;
+    margin:60px auto;
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    text-align:center;
+}
+
+h1{
+    color:#4a0080;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    background:#4a0080;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#6a00b3;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Exam Result</h1>
+
+<h2 id="student"></h2>
+
+<h3 id="score"></h3>
+
+<button onclick="goHome()">
+OK
+</button>
+
+</div>
+
+<script>
+
+const result =
+JSON.parse(localStorage.getItem("cbt_result"));
+
+document.getElementById("student").innerText =
+result.studentName;
+
+document.getElementById("score").innerText =
+`Score: ${result.score}/${result.total}`;
+
+function goHome(){
+
+window.location.href = "sign_in.html";
+
+}
+
+</script>
+
+</body>
+</html>
