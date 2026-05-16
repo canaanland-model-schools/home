@@ -306,43 +306,85 @@
             <p>Number 1: p plus 12 equals 30. Number 2: x divided by 5 equals 7. Number 3: 2y minus 3 equals 11. Number 4: 5m plus 8 equals 33. Number 5: When 7 is added to a number, the result is 25. Find the number.</p>
             <p><strong>TEACHER:</strong> Excellent work. You have learned the golden rule. Keep balancing and keep solving. See you next class.</p>
         </div>
-        <footer> Audio class: commas pause 1 second, full stops pause 2 seconds. Background music plays softly, loops continuously, and lowers when teacher speaks.</footer>
+        <footer> Audio class: commas pause 1 second, full stops pause 2 seconds. Background music plays softly, loops continuously, and lowers when teacher speaks. Music loads from local folder or online fallback.</footer>
     </div>
 
     <script>
-        // ========== BACKGROUND MUSIC SYSTEM WITH AUTO LOOP ==========
+        // ========== BACKGROUND MUSIC SYSTEM WITH FALLBACK ==========
         let backgroundMusic = null;
         let isMusicPlaying = false;
         let musicVolume = 0.25;
         let originalMusicVolume = 0.25;
+        let fallbackUsed = false;
+        
+        // Online fallback music URL (carefree background music from chosic)
+        const ONLINE_MUSIC_URL = "https://www.chosic.com/download-audio/27880/";
+        // Note: Some direct mpeg links from chosic may redirect. Using a reliable CORS-friendly source.
+        // Alternative direct mpeg link that works better for cross-origin
+        const FALLBACK_mpeg_URL = "https://cdn.pixabay.com/download/audio/2022/05/16/audio_09e8c5c1d6.mpeg?filename=carefree-ukulele-10785.mpeg";
         
         function initMusic() {
+            // Try local music first
             try {
-                backgroundMusic = new Audio('music/lukebergs_carefree.mp3');
-                if (!backgroundMusic.canPlayType || backgroundMusic.error) {
-                    backgroundMusic = new Audio('lukebergs_carefree.mp3');
+                backgroundMusic = new Audio('music/lukebergs_carefree.mpeg');
+                if (!backgroundMusic.canPlayType) {
+                    backgroundMusic = new Audio('lukebergs_carefree.mpeg');
                 }
-                // Enable looping so music repeats automatically when it ends
                 backgroundMusic.loop = true;
                 backgroundMusic.volume = musicVolume;
                 backgroundMusic.preload = 'auto';
                 
-                // Additional event listener to ensure looping works even if loop property fails
-                backgroundMusic.addEventListener('ended', function() {
-                    if (isMusicPlaying && !backgroundMusic.loop) {
-                        backgroundMusic.currentTime = 0;
-                        backgroundMusic.play().catch(e => console.log("Loop replay failed:", e));
+                backgroundMusic.onerror = function() {
+                    console.warn("Local music file not found. Trying online fallback...");
+                    if (!fallbackUsed) {
+                        useOnlineFallback();
+                    }
+                };
+                
+                // Also handle load error
+                backgroundMusic.addEventListener('loadeddata', function() {
+                    console.log("Local music loaded successfully");
+                });
+                
+                backgroundMusic.addEventListener('error', function() {
+                    if (!fallbackUsed) {
+                        useOnlineFallback();
                     }
                 });
                 
+            } catch(e) {
+                console.warn("Could not initialize local music:", e);
+                useOnlineFallback();
+            }
+        }
+        
+        function useOnlineFallback() {
+            fallbackUsed = true;
+            try {
+                // Try to load from online source (Pixabay royalty-free carefree music)
+                backgroundMusic = new Audio(FALLBACK_mpeg_URL);
+                backgroundMusic.loop = true;
+                backgroundMusic.volume = musicVolume;
+                backgroundMusic.preload = 'auto';
+                backgroundMusic.crossOrigin = 'anonymous';
+                
                 backgroundMusic.onerror = function() {
-                    console.warn("Background music file not found. Please ensure 'music/lukebergs_carefree.mp3' exists.");
-                    document.getElementById('audioStatus').innerHTML = "⚠️ Music file not found. Playing lesson only.";
+                    console.warn("Online fallback also failed. Music may not play due to CORS or network.");
+                    document.getElementById('audioStatus').innerHTML = "⚠️ Music unavailable. Playing lesson only.";
                     document.getElementById('musicBtn').disabled = true;
                     document.getElementById('musicBtn').style.opacity = '0.5';
                 };
+                
+                backgroundMusic.addEventListener('canplaythrough', function() {
+                    console.log("Online fallback music ready");
+                    document.getElementById('audioStatus').innerHTML = "🎵 Online music loaded. " + (document.getElementById('audioStatus').innerHTML.replace('⚠️ Music unavailable. ', ''));
+                });
+                
             } catch(e) {
-                console.warn("Could not initialize music:", e);
+                console.warn("Online fallback failed:", e);
+                document.getElementById('audioStatus').innerHTML = "⚠️ Music unavailable. Playing lesson only.";
+                document.getElementById('musicBtn').disabled = true;
+                document.getElementById('musicBtn').style.opacity = '0.5';
             }
         }
         
@@ -362,9 +404,10 @@
                         isMusicPlaying = true;
                         document.getElementById('musicBtn').innerHTML = '🎵 MUSIC ON';
                         document.getElementById('musicBtn').classList.add('playing');
+                        document.getElementById('audioStatus').innerHTML = document.getElementById('audioStatus').innerHTML.replace('⚠️ Music unavailable. ', '');
                     }).catch(error => {
                         console.log("Music play failed:", error);
-                        document.getElementById('audioStatus').innerHTML = "⚠️ Click again to play music (browser requires user interaction).";
+                        document.getElementById('audioStatus').innerHTML = "⚠️ Click again to play music (browser may require user interaction).";
                     });
                 }
             }
@@ -396,7 +439,6 @@
             }
         }
         
-        // Stop music completely
         function stopMusic() {
             if (backgroundMusic) {
                 backgroundMusic.pause();
@@ -708,7 +750,7 @@
             window.location.href = "login.html";
         }
         
-        console.log("Audio class ready - Background music loops continuously until lesson ends, volume lowers when teacher speaks.");
+        console.log("Audio class ready - Music loads from local folder or online fallback, loops continuously, volume lowers when teacher speaks.");
     </script>
 </body>
 </html>
