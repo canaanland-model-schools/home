@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSS1 · Digital Technology Week1 with Speech Feature</title>
+    <!-- Font Awesome (icons) & simple PDF viewer style -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Background image with opacity 0.6 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('img/Ctemplogo.png') no-repeat center center;
+            background-size: 300px 300px;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+            background-color: white;
+        }
+
+        /* School logo at the top */
+        .school-logo-top {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-logo-top img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 3px solid #f5b81b;
+        }
+
+        .class-container {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            box-shadow: 0 30px 50px -20px rgba(0,35,65,0.4);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* header with logo & user */
+        .class-header {
+            background: blue;
+            color: white;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-badge {
+            background: #f5b81b;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0b2f4e;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .school-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .user-greeting {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.12);
+            padding: 8px 22px 8px 18px;
+            border-radius: 60px;
+        }
+
+        .user-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid white;
+            object-fit: cover;
+            background: #b4c8e0;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        /* awareness h1 */
+        .awareness-section {
+            background: #e8f0fe;
+            padding: 30px 30px 20px 30px;
+            text-align: center;
+            border-bottom: 2px dashed #9bb6d0;
+        }
+
+        .awareness-h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0a2f4a;
+            background: white;
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 80px;
+            box-shadow: 0 6px 14px rgba(0,40,70,0.15);
+            border: 1px solid #c7d9ec;
+            letter-spacing: -0.3px;
+        }
+
+        .awareness-h1 span {
+            color: #a66000;
+            font-weight: 800;
+        }
+
+        /* 4 card row (added speech card) */
+        .cards-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            padding: 50px 30px;
+        }
+
+        .action-card {
+            flex: 1 1 260px;
+            max-width: 330px;
+            background: white;
+            border-radius: 40px;
+            padding: 32px 22px 32px;
+            box-shadow: 0 20px 30px -8px rgba(0, 30, 60, 0.2);
+            transition: transform 0.2s ease;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .card-icon {
+            font-size: 3.8rem;
+            color: #0b2f4e;
+            background: #e2edff;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1b3a5c;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: #2d4b6b;
+            margin-bottom: 28px;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .card-btn {
+            background: #0b2f4e;
+            color: white;
+            border: none;
+            padding: 16px 18px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid #a1c0e0;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .card-btn i {
+            font-size: 1.2rem;
+        }
+
+        .card-btn:hover {
+            background: #1f4b73;
+            box-shadow: 0 6px 14px #0b2f4e70;
+        }
+
+        /* Speech input area */
+        .speech-input-area {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .speech-input-area input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #c7d9ec;
+            border-radius: 60px;
+            margin-bottom: 12px;
+            outline: none;
+            text-align: center;
+        }
+
+        .speech-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .speech-buttons button {
+            flex: 1;
+            background: #f5b81b;
+            color: #0b2f4e;
+            border: none;
+            padding: 12px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .speech-buttons button:hover {
+            background: #ffcc4d;
+            transform: scale(1.02);
+        }
+
+        .video-password-area {
+            margin-top: 30px;
+            background: #fffbf2;
+            border-radius: 60px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #ffdbaf;
+            gap: 10px;
+        }
+
+        .video-password-area input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 5px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .video-password-area input::placeholder {
+            color: #7b6b58;
+        }
+
+        .small-lock-btn {
+            background: #f5b81b;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 22px;
+            font-weight: 600;
+            color: #0b2f4e;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .small-lock-btn:hover {
+            background: #ffcc4d;
+        }
+
+        .feedback-message {
+            margin: 0 30px 30px 30px;
+            padding: 16px 28px;
+            border-radius: 60px;
+            background: #deedff;
+            font-weight: 500;
+            color: #035388;
+            border-left: 6px solid #0b2f4e;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #2a577b;
+            padding: 20px 30px;
+            border-top: 1px solid rgba(11,47,78,0.2);
+        }
+
+        /* pdf viewer modal/inline (simple) */
+        .pdf-viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .pdf-viewer-content {
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 30px 60px black;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px 20px 10px;
+        }
+
+        .pdf-viewer-header h3 {
+            font-size: 1.6rem;
+            color: #0b2f4e;
+        }
+
+        .close-viewer {
+            background: #e03e3e;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .pdf-frame {
+            width: 100%;
+            flex: 1;
+            border: none;
+            border-radius: 24px;
+            background: #f1f1f1;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+            border: 2px solid #f5b81b;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: #e03e3e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .logout-btn:hover {
+            background: #c03232;
+            transform: scale(1.02);
+        }
+
+        .windows-activate {
+            text-align: center;
+            margin-top: 30px;
+            color: #2a577b;
+            font-size: 14px;
+            padding: 15px;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- School logo at the top -->
+<div class="logo-container">
+    <div class="logo">
+        <img src="img/Ctemplogo.png" alt="School Logo" style="width: 60px; height: 60px; border-radius: 50%;">
+    </div>
+    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+</div>
+
+<div class="class-container" id="mainContainer">
+    <!-- header with logo & user (dynamic from login session) -->
+    <div class="class-header" id="dynamicHeader">
+        <div class="logo-badge"><i class="fas fa-flask"></i></div>
+        <div class="school-title">CANAANLAND MODEL SCHOOLS</div>
+        <div class="user-greeting" id="userGreetingBlock">
+            <img src="img/default-avatar.png" alt="user" class="user-img" id="userImg" onerror="this.src='https://via.placeholder.com/44?text=U';">
+            <span class="username" id="userNameDisplay">Classroom</span>
+        </div>
+    </div>
+
+    <!-- H1 awareness display: class/subject/term/week/session -->
+    <div class="awareness-section">
+        <div class="awareness-h1" id="awarenessHeading">
+            <span>2025-2026</span> JSS1 · Third Term · Digital Technology · Week1
+        </div>
+    </div>
+
+    <!-- 4 cards: view pdf, download pdf, speech tool, watch tutorial -->
+    <div class="cards-row">
+        <!-- Card 1: view week1 PDF notes -->
+        <div class="action-card">
+            <div class="card-icon"><i class="fas fa-file-pdf"></i></div>
+            <div class="card-title">View PDF</div>
+            <div class="card-description">Open the lesson notes in your browser. No download needed – just read online.</div>
+            <button class="card-btn" id="viewPdfBtn"><i class="fas fa-eye"></i> View Week 1 notes</button>
+        </div>
+
+        <!-- Card 2: download week 1 PDF lesson notes -->
+        <div class="action-card">
+            <div class="card-icon"><i class="fas fa-download"></i></div>
+            <div class="card-title">Download PDF</div>
+            <div class="card-description">Save a copy to your device. File: <strong>2025-2026_JSS1_Third_Term_Digital_Technology_Week1_Class.pdf</strong></div>
+            <button class="card-btn" id="downloadPdfBtn"><i class="fas fa-file-arrow-down"></i> Download lesson</button>
+        </div>
+
+        <!-- Card 3: Text-to-Speech / Speech Tool (integrated from second code) -->
+        <div class="action-card">
+            <div class="card-icon"><i class="fas fa-volume-up"></i></div>
+            <div class="card-title">🔊 Text to Speech</div>
+            <div class="card-description">Type or paste text and let the computer read it aloud. Great for auditory learning!</div>
+            <div class="speech-input-area">
+                <input type="text" id="textInput" placeholder="Type something here to speak...">
+                <div class="speech-buttons">
+                    <button id="readTextBtn"><i class="fas fa-play"></i> Speak Text</button>
+                    <button id="welcomeBtn"><i class="fas fa-hand-peace"></i> Say Welcome</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: watch tutorial with password -->
+        <div class="action-card">
+            <div class="card-icon"><i class="fas fa-video"></i></div>
+            <div class="card-title">Watch tutorial</div>
+            <div class="card-description">Stream Week 1 video lesson. Password required.</div>
+            <div class="video-password-area">
+                <input type="password" id="videoPass" placeholder="video password" value="week1video">
+                <button class="small-lock-btn" id="unlockVideoBtn"><i class="fas fa-key"></i> Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- feedback / info area -->
+    <div class="feedback-message" id="globalFeedback">
+        <i class="fas fa-info-circle"></i> CANAANLAND MODEL GROUP OF SCHOOLS CLASSROOM
+    </div>
+
+    <div class="footer-note">
+        <p>&copy; 2026 canaanland-Model-group-of-schools classroom | <i class="fas fa-volume-up"></i> Text-to-Speech enabled</p>
+    </div>
+</div>
+
+<!-- PDF Viewer Modal (embedded) -->
+<div class="pdf-viewer-modal" id="pdfViewerModal">
+    <div class="pdf-viewer-content">
+        <div class="pdf-viewer-header">
+            <h3><i class="fas fa-file-pdf" style="color:#d32f2f;"></i> 2025-2026 JSS1 Third Term Digital Technology Week 1</h3>
+            <button class="close-viewer" id="closePdfViewer">&times;</button>
+        </div>
+        <iframe class="pdf-frame" id="pdfViewerFrame" src="" title="PDF viewer"></iframe>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- Get logged-in user data from login session (from sessionStorage) -----
+        let loggedUser = {
+            username: 'Guest',
+            image: 'default-avatar.png'
+        };
+
+        // Try to load from sessionStorage (set by login.html)
+        const storedUser = sessionStorage.getItem('loggedUser');
+        if (storedUser) {
+            try {
+                loggedUser = JSON.parse(storedUser);
+                console.log('User loaded from session:', loggedUser);
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+            }
+        } else {
+            console.log('No user found in sessionStorage');
+        }
+
+        // Update header with user info
+        const userImgElem = document.getElementById('userImg');
+        const userNameSpan = document.getElementById('userNameDisplay');
+
+        if (loggedUser && loggedUser.image) {
+            userImgElem.src = `img/${loggedUser.image}`;
+        } else {
+            userImgElem.src = 'img/default-avatar.png';
+        }
+        
+        if (loggedUser && loggedUser.username) {
+            userNameSpan.textContent = loggedUser.username;
+        } else {
+            userNameSpan.textContent = 'Guest';
+        }
+
+        // Get current class data from sessionStorage (set by dashboard.html)
+        const currentClassData = sessionStorage.getItem('currentClass');
+        if (currentClassData) {
+            try {
+                const classData = JSON.parse(currentClassData);
+                console.log('Class data loaded:', classData);
+                
+                const awarenessElem = document.getElementById('awarenessHeading');
+                if (awarenessElem && classData) {
+                    const session = classData.session || '2025-2026';
+                    const className = classData.className || 'JSS1';
+                    const term = classData.term || 'Third_Term';
+                    const subject = classData.subject || 'Digital Technology';
+                    const week = classData.week || 'Week1';
+                    
+                    const displayTerm = term.replace('_', ' ');
+                    awarenessElem.innerHTML = `<span>${session}</span> ${className} · ${displayTerm} · ${subject} · ${week.replace('Week', 'Week ')}`;
+                }
+            } catch (e) {
+                console.error('Error parsing class data:', e);
+            }
+        }
+
+        // ---------- file paths ----------
+        const basePdfPath = 'lesson_notes/JSS1/2025-2026_JSS1_Third_Term_Digital_Technology_Week1_Class.pdf';
+        
+        // ---------- CARD 1: VIEW PDF ----------
+        const viewBtn = document.getElementById('viewPdfBtn');
+        const modal = document.getElementById('pdfViewerModal');
+        const closeModal = document.getElementById('closePdfViewer');
+        const pdfFrame = document.getElementById('pdfViewerFrame');
+        const feedbackDiv = document.getElementById('globalFeedback');
+
+        viewBtn.addEventListener('click', function() {
+            pdfFrame.src = basePdfPath;
+            modal.style.display = 'flex';
+            feedbackDiv.innerHTML = `<i class="fas fa-eye"></i> PDF viewer opened: ${basePdfPath}`;
+        });
+
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+            pdfFrame.src = '';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                pdfFrame.src = '';
+            }
+        });
+
+        // ---------- CARD 2: DOWNLOAD PDF ----------
+        const downloadBtn = document.getElementById('downloadPdfBtn');
+        downloadBtn.addEventListener('click', function() {
+            const a = document.createElement('a');
+            a.href = basePdfPath;
+            a.download = '2025-2026_JSS1_Third_Term_Digital_Technology_Week1_Class.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            feedbackDiv.innerHTML = `<i class="fas fa-download"></i> Download started: ${basePdfPath} (if file exists)`;
+        });
+
+        // ---------- CARD 3: TEXT-TO-SPEECH (Integrated from second code) ----------
+        const textInput = document.getElementById('textInput');
+        const readTextBtn = document.getElementById('readTextBtn');
+        const welcomeBtn = document.getElementById('welcomeBtn');
+
+        // Function to read text aloud
+        function readTextAloud(text) {
+            if (text && text.trim() !== "") {
+                const speech = new SpeechSynthesisUtterance(text);
+                speech.lang = 'en-US';
+                speech.pitch = 1;
+                speech.rate = 1;
+                speech.volume = 1;
+                window.speechSynthesis.speak(speech);
+                feedbackDiv.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`;
+            } else {
+                alert("Please enter some text to speak!");
+                feedbackDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> No text entered for speech.`;
+            }
+        }
+
+        // Read text from input box
+        readTextBtn.addEventListener('click', function() {
+            const text = textInput.value.trim();
+            readTextAloud(text);
+        });
+
+        // Say welcome message
+        welcomeBtn.addEventListener('click', function() {
+            const welcomeText = "Hello, welcome to Canaanland Model Schools Digital Technology class!";
+            readTextAloud(welcomeText);
+        });
+
+        // Allow Enter key to trigger speak
+        textInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                readTextAloud(textInput.value.trim());
+            }
+        });
+
+        // ---------- CARD 4: VIDEO + PASSWORD CHECK ----------
+        const unlockBtn = document.getElementById('unlockVideoBtn');
+        const videoPassInput = document.getElementById('videoPass');
+        const CORRECT_VIDEO_PASS = 'week1video';
+
+        unlockBtn.addEventListener('click', function() {
+            const entered = videoPassInput.value.trim();
+
+            if (entered !== CORRECT_VIDEO_PASS) {
+                feedbackDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#b53b3b;"></i> Incorrect video password. Try again. (hint: week1video)`;
+                return;
+            }
+
+            const videoFile = 'videos/2025-2026_JSS1_Third_Term_Digital_Technology_Week1_tutorial.mp4';
+            window.open(videoFile, '_blank');
+            feedbackDiv.innerHTML = `<i class="fas fa-check-circle"></i> Correct! Video should open in new tab: ${videoFile}`;
+        });
+
+        videoPassInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') unlockBtn.click();
+        });
+
+        // ---------- LOGOUT FUNCTION ----------
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            sessionStorage.removeItem('loggedUser');
+            sessionStorage.removeItem('currentClass');
+            window.location.href = 'index.html';
+        });
+
+        // ================== ANTI-CHEAT MEASURES ==================
+        document.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+            alert("Right-click is disabled during classroom.");
+        });
+       
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J') || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                alert("Developer tools are disabled during classroom.");
+            }
+        });
+
+        console.log('Class page ready with integrated Text-to-Speech feature!');
+    })();
+</script>
+</body>
+</html>
