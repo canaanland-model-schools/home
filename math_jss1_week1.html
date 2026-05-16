@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Math Audio Class - Simple Equations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b3d0b 0%, #1a5c1a 100%);
+            color: #f5f5dc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        header img {
+            width: 80px;
+            height: auto;
+            background: white;
+            border-radius: 50%;
+            padding: 8px;
+        }
+
+        .title-badge {
+            background: gold;
+            color: #1a3c1a;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 24px;
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .logout-button:hover {
+            background-color: #a82313;
+            transform: scale(1.02);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 25px;
+            border-radius: 40px;
+            backdrop-filter: blur(3px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.4);
+        }
+
+        .audio-controls {
+            background: #2c5e2c;
+            padding: 20px;
+            border-radius: 60px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border: 2px solid #ffd966;
+        }
+
+        .control-btn {
+            padding: 12px 28px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+            background-color: #ffd966;
+            color: #1e3a1e;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+            background-color: #ffcc33;
+        }
+
+        .control-btn:active {
+            transform: scale(0.98);
+        }
+
+        .stop-btn {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        .pause-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .status {
+            margin: 15px auto;
+            font-size: 1.2rem;
+            background: #00000066;
+            display: inline-block;
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+        .lesson-card {
+            text-align: left;
+            background: #fef9e6;
+            color: #1e2a1e;
+            padding: 30px;
+            border-radius: 35px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            box-shadow: inset 0 0 0 1px #ffefb0, 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .lesson-card h3, .lesson-card h4 {
+            color: #2d6a2d;
+            margin-top: 15px;
+            border-left: 8px solid #ffb347;
+            padding-left: 15px;
+        }
+
+        .lesson-card p {
+            margin: 12px 0;
+        }
+
+        .lesson-card strong {
+            color: #b64926;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #e6d5a8;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #6b8c42;
+            border-radius: 10px;
+        }
+
+        footer {
+            margin-top: 25px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 650px) {
+            .lesson-card {
+                padding: 18px;
+                font-size: 0.95rem;
+            }
+            .control-btn {
+                padding: 8px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffd966'/%3E%3Ctext x='50' y='68' font-size='40' text-anchor='middle' fill='%23333333' font-weight='bold'%3EM%3C/text%3E%3C/svg%3E" alt="Math Logo">
+        <div class="title-badge">🎓 JSS 1 MATHEMATICS · THIRD TERM</div>
+    </header>
+    <button class="logout-button" onclick="logout()">🚪 Logout</button>
+
+    <div class="container">
+        <div class="audio-controls">
+            <button class="control-btn" id="playBtn">▶ PLAY FULL LESSON</button>
+            <button class="control-btn pause-btn" id="pauseBtn">⏸ PAUSE</button>
+            <button class="control-btn stop-btn" id="stopBtn">⏹ STOP</button>
+        </div>
+        <div class="status" id="audioStatus">⚡ Ready — Press PLAY to start class</div>
+
+        <!-- LESSON CONTENT (interactive script with teacher voice) -->
+        <div class="lesson-card" id="lessonContent">
+            <p><strong>🎤 [TEACHER]</strong> Hello, brilliant mathematicians! Welcome to our Mathematics class. Today, we are learning SIMPLE EQUATIONS. By the end, you'll solve equations like a champion. Let's begin!</p>
+
+            <h3>📖 KEY VOCABULARY (Listen carefully)</h3>
+            <p><strong>Equation:</strong> A mathematical sentence with an equals sign (=). Example: x + 5 = 12.</p>
+            <p><strong>Expression:</strong> Math phrase without equals sign. Example: 3x + 5.</p>
+            <p><strong>Variable:</strong> The unknown value, usually a letter like x, y, m.</p>
+            <p><strong>Solution:</strong> The value that makes the equation true.</p>
+            <p><strong>LHS and RHS:</strong> Left-hand side and right-hand side of the equals sign.</p>
+
+            <h3>⭐ GOLDEN RULE OF SOLVING EQUATIONS</h3>
+            <p><strong>🎤 TEACHER:</strong> Whatever you do to one side, you MUST do to the other side. Use inverse operations (opposite operations) to find the variable.</p>
+            <p>Addition ↔️ Subtraction &nbsp;&nbsp;|&nbsp;&nbsp; Multiplication ↔️ Division</p>
+
+            <h3>🔧 CASE 1: ADDITION EQUATIONS (Subtract same number)</h3>
+            <p><strong>Example 1:</strong> x + 6 = 14 → Subtract 6 from both sides → x = 8. Check: 8+6=14 ✅</p>
+            <p><strong>Example 2:</strong> y + 9 = 20 → Subtract 9 → y = 11 ✅</p>
+            <p><strong>Example 3:</strong> m + 15 = 30 → Subtract 15 → m = 15 ✅</p>
+
+            <h3>🔧 CASE 2: SUBTRACTION EQUATIONS (Add same number)</h3>
+            <p><strong>Example 1:</strong> x - 5 = 8 → Add 5 to both sides → x = 13. Check: 13-5=8 ✅</p>
+            <p><strong>Example 2:</strong> y - 7 = 12 → Add 7 → y = 19 ✅</p>
+            <p><strong>Example 3:</strong> m - 10 = 25 → Add 10 → m = 35 ✅</p>
+
+            <h3>🔧 CASE 3: MULTIPLICATION EQUATIONS (Divide both sides)</h3>
+            <p><strong>Example 1:</strong> 4x = 20 → Divide by 4 → x = 5 ✅</p>
+            <p><strong>Example 2:</strong> 7y = 42 → Divide by 7 → y = 6 ✅</p>
+            <p><strong>Example 3:</strong> 9m = 63 → Divide by 9 → m = 7 ✅</p>
+
+            <h3>🔧 CASE 4: DIVISION EQUATIONS (Multiply both sides)</h3>
+            <p><strong>Example 1:</strong> x/3 = 5 → Multiply by 3 → x = 15 ✅</p>
+            <p><strong>Example 2:</strong> y/4 = 7 → Multiply by 4 → y = 28 ✅</p>
+            <p><strong>Example 3:</strong> m/5 = 9 → Multiply by 5 → m = 45 ✅</p>
+
+            <h3>🚀 TWO-STEP EQUATIONS (Undo +/- first, then ×/÷)</h3>
+            <p><strong>Example 1:</strong> 2x + 5 = 13 → Subtract 5 → 2x = 8 → Divide by 2 → x = 4. Check: 2×4+5=13 ✅</p>
+            <p><strong>Example 2:</strong> 3y - 7 = 14 → Add 7 → 3y = 21 → Divide by 3 → y = 7 ✅</p>
+            <p><strong>Example 3:</strong> 5m + 8 = 33 → Subtract 8 → 5m = 25 → Divide by 5 → m = 5 ✅</p>
+            <p><strong>Example with division:</strong> x/2 + 3 = 10 → Subtract 3 → x/2 = 7 → Multiply by 2 → x = 14 ✅</p>
+
+            <h3>⚖️ VARIABLES ON BOTH SIDES</h3>
+            <p><strong>Example:</strong> 5x = 3x + 10 → Subtract 3x → 2x = 10 → Divide by 2 → x = 5. Check: 5×5 = 25, 3×5+10=25 ✅</p>
+            <p><strong>Example 2:</strong> 7y - 4 = 5y + 6 → Subtract 5y → 2y - 4 = 6 → Add 4 → 2y = 10 → Divide by 2 → y = 5 ✅</p>
+
+            <h3>📚 REAL-LIFE WORD PROBLEMS (Step-by-step)</h3>
+            <p><strong>Problem 1:</strong> A number increased by 7 gives 20. Let number = x → x+7=20 → x=13. The number is 13.</p>
+            <p><strong>Problem 2:</strong> Three times a number is 42 → 3x=42 → x=14. The number is 14.</p>
+            <p><strong>Problem 3:</strong> John is x years old. In 5 years he will be 18 → x+5=18 → x=13. John is 13 years old now.</p>
+            <p><strong>Problem 4:</strong> A pen costs Nx. Five pens cost N75 → 5x=75 → x=15. One pen costs N15.</p>
+            <p><strong>Problem 5:</strong> Mary spent N250, she has N150 left → m-250=150 → m=400. She had N400 at first.</p>
+
+            <h3>📝 QUICK SUMMARY</h3>
+            <p>Equation has = . Variable is unknown. Use inverse operations. Keep both sides balanced. Always check your answer. Word problems: Let x = unknown → equation → solve → sentence.</p>
+
+            <h3>✏️ CLASSWORK (Try with me)</h3>
+            <p>1. x+9=21 → x=12 &nbsp;&nbsp; 2. 4y=36 → y=9 &nbsp;&nbsp; 3. m-8=15 → m=23 &nbsp;&nbsp; 4. 3n+5=20 → n=5 &nbsp;&nbsp; 5. 6x=48 → x=8</p>
+
+            <h3>🏠 ASSIGNMENT (Practice at home)</h3>
+            <p>1. p+12=30 &nbsp; 2. x/5=7 &nbsp; 3. 2y-3=11 &nbsp; 4. 5m+8=33 &nbsp; 5. When 7 is added to a number, result is 25. Find the number.</p>
+            <p><strong>🎤 TEACHER:</strong> Excellent work! You've learned the golden rule. Keep balancing, keep solving. See you next class! 👋📐</p>
+        </div>
+        <footer>📢 <em>Audio class: commas pause 2 sec, full stops pause 4 sec for perfect understanding.</em></footer>
+    </div>
+
+    <script>
+        // ----------------- AUDIO ENGINE WITH SMART PAUSING (comma 2s, period 4s) -----------------
+        // We'll split the lesson text into sentences/chunks while preserving natural teacher voice.
+        // Then we'll use SpeechSynthesis with custom delays between utterances.
+        
+        let currentUtteranceQueue = [];   // queue of text strings to speak
+        let isPlaying = false;
+        let isPaused = false;
+        let currentTimeout = null;
+        let currentSpeakingIndex = 0;
+        let speechSynth = window.speechSynthesis;
+        let isSpeakingNow = false;
+
+        // Get the full lesson text from the lesson card (including all HTML inner text, but we want clean readable text)
+        function getCleanLessonText() {
+            const lessonDiv = document.getElementById('lessonContent');
+            // clone to avoid modifying view, extract text content but preserve punctuation and line breaks
+            const cloneDiv = lessonDiv.cloneNode(true);
+            // Remove any script or unwanted styles? just get innerText which respects visibility
+            let rawText = cloneDiv.innerText || cloneDiv.textContent;
+            // Clean up excessive newlines but keep full stops and commas intact
+            rawText = rawText.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+            return rawText;
+        }
+
+        // Splits text into chunks where we pause at commas (2 sec) and full stops (4 sec)
+        // We'll treat each sentence ending with . ! ? as a segment. Also treat commas as split points but with shorter pause.
+        // To simulate natural teaching: Break at periods first, then if comma exists within, we keep them as smaller pauses within the same utterance? 
+        // However for audio clarity: Better to split at both commas and periods, but assign different pause lengths.
+        // We will split into "phrases": split by (. ) and also by (, ) but join carefully.
+        // Implementation: create an array where each segment ends with either comma or period. Then when speaking, after each segment delay accordingly.
+        
+        function splitIntoPausableChunks(fullText) {
+            // Step 1: Split by periods (main sentences) but keep period as part of segment
+            let sentences = [];
+            let temp = fullText.split(/(?<=[.!?])\s+/);
+            for (let sentence of temp) {
+                if (sentence.trim().length === 0) continue;
+                // Now inside a sentence, we want to split by commas for micro-pauses
+                // But we must keep the commas in the text so the speech sounds natural. We'll split whenever we see a comma followed by space.
+                let parts = sentence.split(/(?<=,)\s+/);
+                for (let part of parts) {
+                    if (part.trim().length > 0) {
+                        sentences.push(part.trim());
+                    }
+                }
+            }
+            // Now sentences array contains each chunk. But we need metadata: does it end with period? or comma?
+            const chunksWithPause = sentences.map(chunk => {
+                let lastChar = chunk.trim().slice(-1);
+                if (lastChar === '.' || lastChar === '?' || lastChar === '!') {
+                    return { text: chunk, pauseDuration: 4000 };  // 4 seconds for full stop
+                } else if (lastChar === ',') {
+                    return { text: chunk, pauseDuration: 2000 };  // 2 seconds for comma
+                } else {
+                    // default, maybe end of statement without punctuation? treat as 1 sec but use 2 sec for clarity
+                    return { text: chunk, pauseDuration: 1500 };
+                }
+            });
+            return chunksWithPause;
+        }
+
+        // Global variables for playback
+        let currentChunkList = [];
+        let activeChunkIndex = 0;
+        let currentlySpeaking = false;
+        let pauseRequested = false;
+        let stopRequested = false;
+        let currentSpeechUtterance = null;
+
+        // Cancel any ongoing speech and timeouts
+        function cancelSpeaking(resetQueue = true) {
+            if (speechSynth.speaking || speechSynth.pending) {
+                speechSynth.cancel();
+            }
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+                currentTimeout = null;
+            }
+            if (resetQueue) {
+                isPlaying = false;
+                isPaused = false;
+                currentlySpeaking = false;
+                pauseRequested = false;
+                stopRequested = false;
+                activeChunkIndex = 0;
+                currentChunkList = [];
+            }
+            isSpeakingNow = false;
+            currentSpeechUtterance = null;
+        }
+
+        // Speak a single chunk
+        function speakChunk(chunkText, onEndCallback) {
+            return new Promise((resolve) => {
+                // If stop requested, reject silently
+                if (stopRequested) {
+                    resolve(false);
+                    return;
+                }
+                if (pauseRequested) {
+                    // wait until resume - we'll handle by not calling until resume
+                    resolve(false);
+                    return;
+                }
+                const utterance = new SpeechSynthesisUtterance(chunkText);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.95;   // slightly slower for better comprehension
+                utterance.pitch = 1.05;
+                utterance.volume = 1;
+                utterance.onend = () => {
+                    currentSpeechUtterance = null;
+                    isSpeakingNow = false;
+                    resolve(true);
+                };
+                utterance.onerror = (err) => {
+                    console.warn("Speech error", err);
+                    currentSpeechUtterance = null;
+                    isSpeakingNow = false;
+                    resolve(false);
+                };
+                currentSpeechUtterance = utterance;
+                isSpeakingNow = true;
+                speechSynth.speak(utterance);
+            });
+        }
+
+        async function playFullLesson() {
+            // Stop any current playing
+            cancelSpeaking(true);
+            // reset states
+            stopRequested = false;
+            pauseRequested = false;
+            isPaused = false;
+            const fullText = getCleanLessonText();
+            if (!fullText) {
+                document.getElementById('audioStatus').innerText = "⚠️ No lesson content found!";
+                return;
+            }
+            currentChunkList = splitIntoPausableChunks(fullText);
+            activeChunkIndex = 0;
+            isPlaying = true;
+            currentlySpeaking = true;
+            document.getElementById('audioStatus').innerHTML = "🔊 LESSON PLAYING — Teacher speaking...";
+            
+            for (let idx = 0; idx < currentChunkList.length; idx++) {
+                if (stopRequested) {
+                    break;
+                }
+                // Handle pause: if paused, wait until resumed
+                while (pauseRequested && !stopRequested) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                if (stopRequested) break;
+                
+                const chunk = currentChunkList[idx];
+                activeChunkIndex = idx;
+                // speak the chunk
+                const success = await speakChunk(chunk.text);
+                if (!success && stopRequested) break;
+                if (stopRequested) break;
+                
+                // after chunk ends, delay according to pause duration (comma 2s / period 4s)
+                if (idx < currentChunkList.length - 1 || chunk.pauseDuration > 0) {
+                    await new Promise(resolve => {
+                        currentTimeout = setTimeout(() => {
+                            currentTimeout = null;
+                            resolve();
+                        }, chunk.pauseDuration);
+                    });
+                }
+                if (stopRequested) break;
+            }
+            // finished or stopped
+            if (stopRequested) {
+                document.getElementById('audioStatus').innerHTML = "⏹ Lesson stopped.";
+                isPlaying = false;
+                currentlySpeaking = false;
+            } else if (pauseRequested) {
+                // if paused externally after finishing? normally not, but handle
+                document.getElementById('audioStatus').innerHTML = "⏸ Lesson paused — press PLAY to resume";
+            } else {
+                document.getElementById('audioStatus').innerHTML = "✅ Lesson completed! Great learning!";
+                isPlaying = false;
+                currentlySpeaking = false;
+            }
+            if (!stopRequested && !pauseRequested) {
+                isPlaying = false;
+                currentlySpeaking = false;
+            }
+            activeChunkIndex = 0;
+        }
+
+        // Pause functionality - graceful pause
+        function pauseLesson() {
+            if (!isPlaying && !currentlySpeaking && !speechSynth.speaking && !isPaused) {
+                document.getElementById('audioStatus').innerHTML = "⏸ Nothing playing. Press PLAY.";
+                return;
+            }
+            if (pauseRequested) return;
+            if (isPlaying || currentlySpeaking || speechSynth.speaking) {
+                pauseRequested = true;
+                isPaused = true;
+                // Cancel current speech immediately to pause mid-word
+                if (speechSynth.speaking) {
+                    speechSynth.cancel();
+                }
+                if (currentTimeout) {
+                    clearTimeout(currentTimeout);
+                    currentTimeout = null;
+                }
+                isSpeakingNow = false;
+                currentlySpeaking = false;
+                isPlaying = false;
+                document.getElementById('audioStatus').innerHTML = "⏸ Lesson PAUSED. Press PLAY to resume from where you stopped.";
+            }
+        }
+
+        // Resume function (play from current index)
+        async function resumeLesson() {
+            if (stopRequested) {
+                // if stopped completely, we need fresh start
+                document.getElementById('audioStatus').innerHTML = "Please press PLAY to restart lesson.";
+                return;
+            }
+            if (!pauseRequested && !isPaused && isPlaying) {
+                // already playing
+                return;
+            }
+            if (currentChunkList.length === 0 || activeChunkIndex >= currentChunkList.length) {
+                // if no chunks, start fresh
+                playFullLesson();
+                return;
+            }
+            // resume from activeChunkIndex
+            pauseRequested = false;
+            isPaused = false;
+            stopRequested = false;
+            isPlaying = true;
+            currentlySpeaking = true;
+            document.getElementById('audioStatus').innerHTML = "🔊 RESUMING lesson...";
+            
+            for (let idx = activeChunkIndex; idx < currentChunkList.length; idx++) {
+                if (stopRequested) break;
+                while (pauseRequested && !stopRequested) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                if (stopRequested) break;
+                const chunk = currentChunkList[idx];
+                activeChunkIndex = idx;
+                const success = await speakChunk(chunk.text);
+                if (!success && stopRequested) break;
+                if (stopRequested) break;
+                if (idx < currentChunkList.length - 1) {
+                    await new Promise(resolve => {
+                        currentTimeout = setTimeout(() => {
+                            currentTimeout = null;
+                            resolve();
+                        }, chunk.pauseDuration);
+                    });
+                }
+                if (stopRequested) break;
+            }
+            if (stopRequested) {
+                document.getElementById('audioStatus').innerHTML = "⏹ Lesson stopped.";
+                isPlaying = false;
+                currentlySpeaking = false;
+            } else if (pauseRequested) {
+                document.getElementById('audioStatus').innerHTML = "⏸ Lesson paused.";
+            } else {
+                document.getElementById('audioStatus').innerHTML = "✅ Lesson completed! Excellent!";
+                isPlaying = false;
+                currentlySpeaking = false;
+                activeChunkIndex = 0;
+            }
+        }
+
+        // Stop completely
+        function stopLesson() {
+            cancelSpeaking(true);
+            stopRequested = true;
+            pauseRequested = false;
+            isPaused = false;
+            isPlaying = false;
+            currentlySpeaking = false;
+            activeChunkIndex = 0;
+            currentChunkList = [];
+            document.getElementById('audioStatus').innerHTML = "⏹ Lesson stopped. Press PLAY to start from beginning.";
+            if (speechSynth.speaking) speechSynth.cancel();
+            if (currentTimeout) clearTimeout(currentTimeout);
+        }
+
+        // Play: stop anything, then fresh start
+        function startPlay() {
+            stopLesson();        // full reset
+            // small delay to ensure cancel is processed
+            setTimeout(() => {
+                pauseRequested = false;
+                stopRequested = false;
+                isPaused = false;
+                playFullLesson();
+            }, 50);
+        }
+
+        // Connect buttons
+        document.getElementById('playBtn').addEventListener('click', startPlay);
+        document.getElementById('pauseBtn').addEventListener('click', pauseLesson);
+        document.getElementById('stopBtn').addEventListener('click', stopLesson);
+
+        // Also ensure page doesn't keep speaking on exit
+        window.addEventListener('beforeunload', () => {
+            if (speechSynth.speaking) speechSynth.cancel();
+        });
+
+        function logout() {
+            if (speechSynth.speaking) speechSynth.cancel();
+            window.location.href = "login.html";
+        }
+
+        // Also when user clicks outside, no auto read. manual only.
+        console.log("Audio class ready – punctuation delays: comma 2s, period 4s.");
+    </script>
+</body>
+</html>
