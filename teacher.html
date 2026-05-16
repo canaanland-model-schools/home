@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Audio Studio · Canaanland Classroom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body {
+            min-height: 100vh;
+            padding: 25px 20px;
+            background: #f4f9ff;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="80" fill="rgba(0,0,0,0.03)">📄</text></svg>') repeat;
+            background-size: 80px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 48px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            background: linear-gradient(135deg, #0b2f4e, #1c4e6e);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo-badge {
+            background: #f5b81b;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .title h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .title p { font-size: 0.85rem; opacity: 0.85; }
+        .logout-btn {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .main-content { padding: 2rem; }
+        .upload-area {
+            border: 2px dashed #0b2f4e;
+            border-radius: 32px;
+            padding: 2rem;
+            text-align: center;
+            background: #fefce8;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 2rem;
+        }
+        .upload-area:hover { background: #fef9c3; border-color: #f5b81b; }
+        .upload-area i { font-size: 3rem; color: #0b2f4e; margin-bottom: 0.5rem; }
+        .extracted-text {
+            background: #f0f4fa;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .audio-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: #0b2f4e; color: white; }
+        .btn-primary:hover { background: #1d537b; transform: scale(1.02); }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-warning:hover { background: #e0a800; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; }
+        .status {
+            text-align: center;
+            padding: 1rem;
+            background: #e9f0fe;
+            border-radius: 40px;
+            color: #0b2f4e;
+        }
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid #cde0ef;
+            color: #306f96;
+        }
+        @media (max-width: 700px) {
+            .main-content { padding: 1rem; }
+            .btn { padding: 8px 16px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="logo-badge"><i class="fas fa-file-audio"></i></div>
+            <div class="title">
+                <h1>PDF to Audio Studio</h1>
+                <p>Extract text · Listen · Record · Download</p>
+            </div>
+        </div>
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <div class="main-content">
+        <!-- PDF Upload Area -->
+        <div class="upload-area" id="uploadArea">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p><strong>Click or Drag & Drop</strong> PDF file here</p>
+            <p style="font-size: 0.8rem; margin-top: 8px;">.pdf only (max 10MB)</p>
+            <input type="file" id="pdfInput" accept=".pdf" style="display: none;">
+        </div>
+
+        <!-- Extracted Text Display -->
+        <div class="extracted-text" id="textDisplay" style="display: none;">
+            <h3><i class="fas fa-file-alt"></i> Extracted Text</h3>
+            <p id="extractedTextContent" style="white-space: pre-wrap;"></p>
+        </div>
+
+        <!-- Audio Controls -->
+        <div class="audio-controls" id="audioControls" style="display: none;">
+            <button class="btn btn-primary" id="playBtn"><i class="fas fa-play"></i> Play</button>
+            <button class="btn btn-warning" id="pauseBtn"><i class="fas fa-pause"></i> Pause</button>
+            <button class="btn btn-danger" id="stopBtn"><i class="fas fa-stop"></i> Stop</button>
+            <button class="btn btn-success" id="recordBtn"><i class="fas fa-circle" style="color: #ff4444;"></i> Record</button>
+            <button class="btn btn-primary" id="downloadRecordBtn" disabled><i class="fas fa-download"></i> Download Recording</button>
+        </div>
+
+        <!-- Status Message -->
+        <div class="status" id="statusMsg">
+            <i class="fas fa-info-circle"></i> Upload a PDF to get started
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2026 Canaanland Digital Classroom · Convert PDF to Audio with Recording</p>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // PDF to Audio + Recording + Download
+    // ============================================================
+    
+    // DOM Elements
+    const uploadArea = document.getElementById('uploadArea');
+    const pdfInput = document.getElementById('pdfInput');
+    const textDisplay = document.getElementById('textDisplay');
+    const extractedTextContent = document.getElementById('extractedTextContent');
+    const audioControls = document.getElementById('audioControls');
+    const statusMsg = document.getElementById('statusMsg');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const recordBtn = document.getElementById('recordBtn');
+    const downloadRecordBtn = document.getElementById('downloadRecordBtn');
+
+    // Global variables
+    let currentText = '';
+    let currentUtterance = null;
+    let isPlaying = false;
+    
+    // Recording variables
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordedBlob = null;
+    let isRecording = false;
+    let audioContext = null;
+    let destination = null;
+    let sourceNode = null;
+
+    // Initialize PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    // ============================================================
+    // 1. PDF Upload & Text Extraction (from Code 1)
+    // ============================================================
+    uploadArea.addEventListener('click', () => pdfInput.click());
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.background = '#fef9c3';
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.background = '#fefce8';
+    });
+    
+    uploadArea.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        uploadArea.style.background = '#fefce8';
+        const file = e.dataTransfer.files[0];
+        if (file && file.type === 'application/pdf') {
+            await extractPDFText(file);
+        } else {
+            statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please upload a valid PDF file.';
+        }
+    });
+    
+    pdfInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            await extractPDFText(file);
+        }
+    });
+
+    async function extractPDFText(file) {
+        if (file.size > 10 * 1024 * 1024) {
+            statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> File too large. Max 10MB.';
+            return;
+        }
+        
+        statusMsg.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Extracting text from PDF...';
+        
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let fullText = '';
+            
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                fullText += pageText + '\n';
+            }
+            
+            currentText = fullText.trim();
+            
+            if (!currentText) {
+                statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> No text found in this PDF.';
+                return;
+            }
+            
+            extractedTextContent.textContent = currentText;
+            textDisplay.style.display = 'block';
+            audioControls.style.display = 'flex';
+            statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> PDF loaded! ${currentText.split(' ').length} words extracted. Ready to play.`;
+            
+        } catch (error) {
+            console.error('PDF extraction error:', error);
+            statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error reading PDF. Make sure it\'s a valid text-based PDF.';
+        }
+    }
+
+    // ============================================================
+    // 2. Play / Pause / Stop Audio (using SpeechSynthesis)
+    // ============================================================
+    function stopAudio() {
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+        isPlaying = false;
+        currentUtterance = null;
+        
+        // Stop recording if active
+        if (isRecording) {
+            stopRecording();
+        }
+    }
+    
+    function playAudio() {
+        if (!currentText) {
+            statusMsg.innerHTML = '<i class="fas fa-info-circle"></i> No text to speak. Upload a PDF first.';
+            return;
+        }
+        
+        // Stop any ongoing speech
+        stopAudio();
+        
+        // Small delay to ensure clean start
+        setTimeout(() => {
+            currentUtterance = new SpeechSynthesisUtterance(currentText);
+            currentUtterance.lang = 'en-US';
+            currentUtterance.rate = 0.9;
+            currentUtterance.pitch = 1.0;
+            currentUtterance.volume = 1.0;
+            
+            currentUtterance.onstart = () => {
+                isPlaying = true;
+                statusMsg.innerHTML = '<i class="fas fa-volume-up"></i> Playing audio...';
+            };
+            
+            currentUtterance.onend = () => {
+                isPlaying = false;
+                statusMsg.innerHTML = '<i class="fas fa-check-circle"></i> Audio finished.';
+                
+                // Stop recording if was recording
+                if (isRecording) {
+                    stopRecording();
+                }
+            };
+            
+            currentUtterance.onerror = () => {
+                isPlaying = false;
+                statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error playing audio.';
+            };
+            
+            window.speechSynthesis.speak(currentUtterance);
+        }, 100);
+    }
+    
+    function pauseAudio() {
+        if (window.speechSynthesis && isPlaying) {
+            window.speechSynthesis.pause();
+            statusMsg.innerHTML = '<i class="fas fa-pause-circle"></i> Audio paused.';
+        }
+    }
+    
+    function resumeAudio() {
+        if (window.speechSynthesis && currentUtterance) {
+            window.speechSynthesis.resume();
+            statusMsg.innerHTML = '<i class="fas fa-volume-up"></i> Audio resumed.';
+        }
+    }
+    
+    playBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            // If already playing, do nothing or restart?
+            stopAudio();
+            setTimeout(() => playAudio(), 200);
+        } else {
+            playAudio();
+        }
+    });
+    
+    pauseBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            pauseAudio();
+        } else {
+            statusMsg.innerHTML = '<i class="fas fa-info-circle"></i> No audio playing.';
+        }
+    });
+    
+    stopBtn.addEventListener('click', () => {
+        stopAudio();
+        statusMsg.innerHTML = '<i class="fas fa-stop-circle"></i> Audio stopped.';
+    });
+    
+    // Resume on space? Optional, but fine for now
+
+    // ============================================================
+    // 3. RECORD AUDIO from SpeechSynthesis output
+    // ============================================================
+    // Note: Capturing SpeechSynthesis directly is complex due to API restrictions.
+    // Alternative: Use Web Audio API to capture system audio (requires getUserMedia with chromeMediaSource).
+    // SIMPLER SOLUTION: Record microphone as fallback, OR use AudioContext from an oscillator.
+    // For production: Use MediaRecorder on a stream from an AudioContext that plays the TTS.
+    // 
+    // Here's a working approach: Create an AudioContext, use SpeechSynthesis + workaround,
+    // but that's unreliable across browsers. 
+    // 
+    // Instead, I'll implement a simple solution: Play audio and record microphone simultaneously,
+    // OR generate a synthetic speech using Web Speech API + capture via getUserMedia (system audio requires extension).
+    // 
+    // For GitHub Pages, the most reliable is: Record from microphone while TTS plays through speakers.
+    // User can hear and record. Here's that implementation:
+    
+    async function startRecording() {
+        if (isRecording) {
+            statusMsg.innerHTML = '<i class="fas fa-info-circle"></i> Already recording.';
+            return;
+        }
+        
+        if (!currentText) {
+            statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> No text to record. Upload PDF first.';
+            return;
+        }
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = (event) => {
+                audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = () => {
+                recordedBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(recordedBlob);
+                downloadRecordBtn.disabled = false;
+                statusMsg.innerHTML = '<i class="fas fa-check-circle"></i> Recording saved! Click "Download Recording" to save to Downloads folder.';
+                
+                // Stop all tracks
+                stream.getTracks().forEach(track => track.stop());
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            statusMsg.innerHTML = '<i class="fas fa-circle" style="color:#ff4444;"></i> Recording... Playing audio now.';
+            
+            // Start playing audio
+            if (isPlaying) {
+                stopAudio();
+                setTimeout(() => {
+                    playAudio();
+                }, 200);
+            } else {
+                playAudio();
+            }
+            
+            recordBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+            
+        } catch (err) {
+            console.error('Microphone access error:', err);
+            statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Cannot record. Please allow microphone access.';
+        }
+    }
+    
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+            recordBtn.innerHTML = '<i class="fas fa-circle" style="color:#ff4444;"></i> Record';
+            
+            // Stop audio after recording stops
+            stopAudio();
+        }
+    }
+    
+    recordBtn.addEventListener('click', () => {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    });
+    
+    // ============================================================
+    // 4. DOWNLOAD recorded audio to local Downloads folder
+    // ============================================================
+    downloadRecordBtn.addEventListener('click', () => {
+        if (!recordedBlob) {
+            statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> No recording available. Record audio first.';
+            return;
+        }
+        
+        const url = URL.createObjectURL(recordedBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `pdf_audio_recording_${Date.now()}.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        statusMsg.innerHTML = '<i class="fas fa-download"></i> Download started! Check your Downloads folder.';
+    });
+    
+    // ============================================================
+    // 5. Logout function (from Code 3)
+    // ============================================================
+    function handleLogout() {
+        sessionStorage.clear();
+        const isLocal = window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1';
+        if (isLocal) {
+            window.location.href = 'index.html';
+        } else {
+            window.location.href = 'https://canaanland-model-schools.github.io/classroom/classroom-index.html';
+        }
+    }
+    
+    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+    
+    // ============================================================
+    // 6. User session display (mock)
+    // ============================================================
+    let loggedUser = { username: 'Student' };
+    try {
+        const stored = sessionStorage.getItem('loggedUser');
+        if (stored) loggedUser = JSON.parse(stored);
+    } catch(e) {}
+    
+    // Optional: Add user name to header if needed
+    // document.querySelector('.title p').innerHTML += ` · Welcome ${loggedUser.username}`;
+    
+    console.log('PDF to Audio Studio ready');
+</script>
+</body>
+</html>
